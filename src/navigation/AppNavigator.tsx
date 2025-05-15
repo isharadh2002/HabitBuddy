@@ -1,3 +1,5 @@
+//src/navigation/AppNavigator.tsx
+
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -9,7 +11,14 @@ import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoadingScreen from '../screens/LoadingScreen';
 
-const Stack = createNativeStackNavigator();
+// Define types directly in this file
+type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  Home: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   const {user, loading} = useAuth();

@@ -1,3 +1,5 @@
+//src/screens/HomeScreen.tsx
+
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useAuth} from '../contexts/AuthContext';

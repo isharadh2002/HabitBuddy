@@ -1,3 +1,5 @@
+//src/screens/RegisterScreen.tsx
+
 import React, {useState} from 'react';
 import {
   View,
@@ -13,6 +15,7 @@ import {
 } from 'react-native';
 import {useAuth} from '../contexts/AuthContext';
 import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
@@ -22,7 +25,14 @@ const RegisterScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const {signUp} = useAuth();
-  const navigation = useNavigation();
+  // Define the type directly without using the imported type
+  type RootStackParamList = {
+    Login: undefined;
+    Register: undefined;
+    Home: undefined;
+  };
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList, 'Register'>>();
 
   const handleRegister = async () => {
     // Validate form
