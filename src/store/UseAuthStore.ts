@@ -6,7 +6,7 @@ import {
   getCurrentUser, 
   setCurrentUser, 
   storeUser 
-} from '../services/storageService';
+} from '../services/StorageService';
 import { validateEmail, validatePassword } from '../utils/Validation';
 
 // Generate a simple ID for new users
