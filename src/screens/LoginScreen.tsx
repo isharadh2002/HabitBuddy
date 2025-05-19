@@ -87,7 +87,7 @@ const LoginScreen = ({navigation}: Props) => {
 
       <TextInput
         placeholder="Email"
-        placeholderTextColor="#999"
+        placeholderTextColor={theme.placeholderText}
         value={email}
         onChangeText={setEmail}
         style={styles.input}
@@ -96,7 +96,7 @@ const LoginScreen = ({navigation}: Props) => {
 
       <TextInput
         placeholder="Password"
-        placeholderTextColor="#999"
+        placeholderTextColor={theme.placeholderText}
         secureTextEntry
         value={password}
         onChangeText={setPassword}

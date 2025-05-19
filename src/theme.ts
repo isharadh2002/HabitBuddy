@@ -12,6 +12,7 @@ export type Theme = {
   cardBackground: string;
   borderColor: string;
   error: string;
+  placeholderText: string;
 };
 
 export const lightTheme: Theme = {
@@ -25,6 +26,7 @@ export const lightTheme: Theme = {
   cardBackground: '#FFFFFF',
   borderColor: '#B2D3C2',
   error: '#E63946',
+  placeholderText: '#777777',
 };
 
 export const darkTheme: Theme = {
@@ -38,6 +40,7 @@ export const darkTheme: Theme = {
   cardBackground: '#23423D',
   borderColor: '#3D8569',
   error: '#FF6B6B',
+  placeholderText: '#AAAAAA',
 };
 
 export const useTheme = () => {

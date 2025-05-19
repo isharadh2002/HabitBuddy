@@ -97,7 +97,7 @@ const RegisterScreen = ({navigation}: Props) => {
 
       <TextInput
         placeholder="Name"
-        placeholderTextColor={theme.text}
+        placeholderTextColor={theme.placeholderText}
         value={name}
         onChangeText={setName}
         style={styles.input}
@@ -105,7 +105,7 @@ const RegisterScreen = ({navigation}: Props) => {
 
       <TextInput
         placeholder="Email"
-        placeholderTextColor={theme.text}
+        placeholderTextColor={theme.placeholderText}
         value={email}
         onChangeText={setEmail}
         style={styles.input}
@@ -115,7 +115,7 @@ const RegisterScreen = ({navigation}: Props) => {
 
       <TextInput
         placeholder="Birthday (YYYY-MM-DD)"
-        placeholderTextColor={theme.text}
+        placeholderTextColor={theme.placeholderText}
         value={birthday}
         onChangeText={setBirthday}
         style={styles.input}
@@ -123,7 +123,7 @@ const RegisterScreen = ({navigation}: Props) => {
 
       <TextInput
         placeholder="Gender"
-        placeholderTextColor={theme.text}
+        placeholderTextColor={theme.placeholderText}
         value={gender}
         onChangeText={setGender}
         style={styles.input}
@@ -131,7 +131,7 @@ const RegisterScreen = ({navigation}: Props) => {
 
       <TextInput
         placeholder="Password"
-        placeholderTextColor={theme.text}
+        placeholderTextColor={theme.placeholderText}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -140,7 +140,7 @@ const RegisterScreen = ({navigation}: Props) => {
 
       <TextInput
         placeholder="Confirm Password"
-        placeholderTextColor={theme.text}
+        placeholderTextColor={theme.placeholderText}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
