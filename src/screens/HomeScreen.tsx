@@ -1,22 +1,40 @@
+// src/screens/HomeScreen.tsx
 import React from 'react';
 import {View, Text, Button} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useAuthStore} from '../store/authStore';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../navigation/types';
 
-export default function HomeScreen() {
-  const {user, logout} = useAuthStore();
+type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+
+const HomeScreen = ({navigation}: Props) => {
+  const currentUser = useAuthStore(state => state.currentUser);
+  const logout = useAuthStore(state => state.logout);
+
+  const handleLogout = () => {
+    logout();
+    navigation.navigate('Login');
+  };
 
   return (
-    <View style={{flex: 1, padding: 20}}>
-      <Icon name="user" size={30} color="#000" />
-      <Text style={{fontSize: 24, marginVertical: 20}}>
-        Welcome {user?.name}!
-      </Text>
-      <Text>Email: {user?.email}</Text>
+    <View style={{padding: 20}}>
+      <Text style={{fontSize: 20, marginBottom: 15}}>User Details:</Text>
+      <Text>Name: {currentUser?.name}</Text>
+      <Text>Email: {currentUser?.email}</Text>
+      <Text>Birthday: {currentUser?.birthday}</Text>
+      <Text>Gender: {currentUser?.gender}</Text>
 
-      <View style={{marginTop: 20}}>
-        <Button title="Logout" onPress={logout} />
-      </View>
+      <Button title="Logout" onPress={handleLogout} />
+      <Icon
+        name="logout"
+        size={30}
+        color="red"
+        style={{marginTop: 15}}
+        onPress={handleLogout}
+      />
     </View>
   );
-}
+};
+
+export default HomeScreen;
