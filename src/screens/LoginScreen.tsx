@@ -3,14 +3,16 @@ import React, {useState} from 'react';
 import {
   View,
   TextInput,
-  Button,
   Alert,
   Text,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 import {useAuthStore} from '../store/authStore';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation/types';
+import {useTheme} from '../theme';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -18,6 +20,51 @@ const LoginScreen = ({navigation}: Props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const login = useAuthStore(state => state.login);
+  const {theme, isDarkMode} = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: theme.background,
+    },
+    header: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 30,
+      textAlign: 'center',
+    },
+    input: {
+      height: 50,
+      backgroundColor: theme.inputBackground,
+      borderColor: theme.borderColor,
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingHorizontal: 15,
+      marginBottom: 15,
+      fontSize: 16,
+      color: theme.text,
+    },
+    button: {
+      backgroundColor: theme.buttonBackground,
+      borderRadius: 8,
+      padding: 15,
+      alignItems: 'center',
+      marginVertical: 10,
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    linkText: {
+      color: theme.buttonBackground,
+      textAlign: 'center',
+      marginTop: 15,
+      fontSize: 16,
+    },
+  });
 
   const handleLogin = () => {
     if (!email || !password) {
@@ -27,53 +74,46 @@ const LoginScreen = ({navigation}: Props) => {
 
     login(email, password);
 
-    if (useAuthStore.getState().isLoggedIn) {
+    /*if (useAuthStore.getState().isLoggedIn) {
       navigation.navigate('Home');
     } else {
       Alert.alert('Error', 'Invalid credentials');
-    }
+    }*/
   };
 
   return (
-    <View style={{padding: 20}}>
+    <View style={styles.container}>
+      <Text style={styles.header}>Welcome Back</Text>
+
       <TextInput
         placeholder="Email"
-        placeholderTextColor="#777"
+        placeholderTextColor="#999"
         value={email}
         onChangeText={setEmail}
         style={styles.input}
+        keyboardType="email-address"
       />
+
       <TextInput
         placeholder="Password"
-        placeholderTextColor="#777"
+        placeholderTextColor="#999"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
         style={styles.input}
       />
 
-      <Button title="Login" onPress={handleLogin} />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Register')}
-        style={{marginTop: 15}}>
-        <Text style={{color: 'blue', textAlign: 'center'}}>
-          Don't have an account? Register
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.linkText}>
+          Don't have an account? Register here
         </Text>
       </TouchableOpacity>
     </View>
   );
-};
-
-const styles = {
-  input: {
-    marginBottom: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    color: '#111111',
-  },
 };
 
 export default LoginScreen;
