@@ -1,113 +1,216 @@
 // src/screens/HomeScreen.tsx
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
-} from 'react-native';
+import {View, Text, StyleSheet, StatusBar, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useAuthStore} from '../store/authStore';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigation/types';
 import {useTheme} from '../theme';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
-
-const HomeScreen = ({navigation}: Props) => {
+const HomeScreen = () => {
   const currentUser = useAuthStore(state => state.currentUser);
-  const logout = useAuthStore(state => state.logout);
-  const {theme, isDarkMode} = useTheme();
+  const {theme} = useTheme();
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
       backgroundColor: theme.background,
     },
-    header: {
-      fontSize: 28,
+    content: {
+      padding: 20,
+    },
+    greeting: {
+      fontSize: 32,
       fontWeight: 'bold',
       color: theme.text,
-      marginBottom: 30,
-      textAlign: 'center',
+      marginBottom: 5,
     },
-    userDetails: {
-      backgroundColor: theme.cardBackground,
-      borderRadius: 10,
+    date: {
+      fontSize: 16,
+      color: theme.text + '80',
+      marginBottom: 30,
+    },
+    progressCard: {
+      backgroundColor: theme.buttonBackground,
+      borderRadius: 20,
       padding: 20,
-      marginVertical: 15,
+      marginBottom: 30,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 4},
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 5,
+    },
+    progressTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: 'white',
+      marginLeft: 10,
+    },
+    progressSubtitle: {
+      fontSize: 14,
+      color: 'white',
+      opacity: 0.8,
+      marginLeft: 10,
+      marginBottom: 15,
+    },
+    progressStats: {
+      fontSize: 12,
+      color: 'white',
+      opacity: 0.9,
+      marginLeft: 10,
+    },
+    progressHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 5,
+    },
+    progressPercentage: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: 'white',
+    },
+    sectionHeader: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 15,
+    },
+    habitCard: {
+      backgroundColor: theme.cardBackground,
+      borderRadius: 15,
+      padding: 15,
+      marginBottom: 15,
+      flexDirection: 'row',
+      alignItems: 'center',
       shadowColor: '#000',
       shadowOffset: {width: 0, height: 2},
-      shadowOpacity: 0.1,
+      shadowOpacity: 0.05,
       shadowRadius: 4,
-      elevation: 3,
+      elevation: 2,
     },
-    detailText: {
-      fontSize: 16,
-      marginBottom: 8,
-      color: theme.text,
-    },
-    button: {
-      backgroundColor: theme.error,
-      borderRadius: 8,
-      padding: 15,
+    habitIcon: {
+      width: 50,
+      height: 50,
+      backgroundColor: theme.buttonBackground + '20',
+      borderRadius: 25,
       alignItems: 'center',
-      marginVertical: 10,
+      justifyContent: 'center',
+      marginRight: 15,
     },
-    buttonText: {
-      color: 'white',
+    habitInfo: {
+      flex: 1,
+    },
+    habitTitle: {
       fontSize: 16,
       fontWeight: '600',
+      color: theme.text,
+      marginBottom: 5,
     },
-    logoutButton: {
-      flexDirection: 'row',
-      justifyContent: 'center',
+    habitSubtitle: {
+      fontSize: 14,
+      color: theme.text + '70',
+    },
+    habitMeta: {
       alignItems: 'center',
-      marginTop: 20,
-      gap: 8,
     },
-    icon: {
-      marginBottom: 10,
-      alignSelf: 'center',
+    habitTime: {
+      fontSize: 12,
+      color: theme.text + '60',
+      marginBottom: 5,
+    },
+    chatButton: {
+      backgroundColor: theme.buttonBackground,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 15,
+    },
+    chatButtonText: {
+      color: 'white',
+      fontSize: 12,
+      fontWeight: '600',
     },
   });
 
-  const handleLogout = () => {
-    logout();
-    navigation.navigate('Login');
+  const getCurrentDate = () => {
+    const date = new Date();
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   };
 
   return (
     <View style={styles.container}>
       <StatusBar
-        backgroundColor={theme.titleBar}
+        backgroundColor={theme.statusBarBackground}
         barStyle={theme.statusBarStyle}
       />
-      <Text style={styles.header}>Your Profile</Text>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <Text style={styles.greeting}>
+          Hi, {currentUser?.name?.split(' ')[0] || 'User'}
+        </Text>
+        <Text style={styles.date}>{getCurrentDate()}</Text>
 
-      <View style={styles.userDetails}>
-        <Icon
-          name="account-circle"
-          size={48}
-          color={theme.text}
-          style={styles.icon}
-        />
-        <Text style={styles.detailText}>Name: {currentUser?.name}</Text>
-        <Text style={styles.detailText}>Email: {currentUser?.email}</Text>
-        <Text style={styles.detailText}>Birthday: {currentUser?.birthday}</Text>
-        <Text style={styles.detailText}>Gender: {currentUser?.gender}</Text>
-      </View>
+        {/* Daily Goals Progress */}
+        <View style={styles.progressCard}>
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressPercentage}>25%</Text>
+            <View style={{flex: 1}}>
+              <Text style={styles.progressTitle}>Daily Goals</Text>
+              <Text style={styles.progressSubtitle}>
+                Almost there! Goals in reach!
+              </Text>
+            </View>
+          </View>
+          <Text style={styles.progressStats}>1/5 habits 1/3 challenges</Text>
+        </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
+        {/* In Progress Section */}
+        <Text style={styles.sectionHeader}>IN PROGRESS (2)</Text>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Icon name="exit-to-app" size={24} color={theme.error} />
-        <Text style={[styles.detailText, {color: theme.error}]}>Logout</Text>
-      </TouchableOpacity>
+        <View style={styles.habitCard}>
+          <View style={styles.habitIcon}>
+            <Icon
+              name="cleaning-services"
+              size={24}
+              color={theme.buttonBackground}
+            />
+          </View>
+          <View style={styles.habitInfo}>
+            <Text style={styles.habitTitle}>Tidying Challenge</Text>
+            <Text style={styles.habitSubtitle}>
+              Separate items for donation and trash
+            </Text>
+          </View>
+          <View style={styles.habitMeta}>
+            <Text style={styles.habitTime}>07:41:12</Text>
+            <View style={styles.chatButton}>
+              <Text style={styles.chatButtonText}>Chat</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.habitCard}>
+          <View style={styles.habitIcon}>
+            <Icon
+              name="self-improvement"
+              size={24}
+              color={theme.buttonBackground}
+            />
+          </View>
+          <View style={styles.habitInfo}>
+            <Text style={styles.habitTitle}>Happy Habits Challenge</Text>
+            <Text style={styles.habitSubtitle}>Daily mindfulness practice</Text>
+          </View>
+          <View style={styles.habitMeta}>
+            <Text style={styles.habitTime}>02:15:30</Text>
+            <View style={styles.chatButton}>
+              <Text style={styles.chatButtonText}>Chat</Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };
