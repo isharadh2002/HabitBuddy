@@ -1,6 +1,12 @@
 // src/screens/HomeScreen.tsx
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useAuthStore} from '../store/authStore';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -12,7 +18,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 const HomeScreen = ({navigation}: Props) => {
   const currentUser = useAuthStore(state => state.currentUser);
   const logout = useAuthStore(state => state.logout);
-  const {theme} = useTheme();
+  const {theme, isDarkMode} = useTheme();
 
   const styles = StyleSheet.create({
     container: {
@@ -75,6 +81,10 @@ const HomeScreen = ({navigation}: Props) => {
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        backgroundColor={theme.titleBar}
+        barStyle={theme.statusBarStyle}
+      />
       <Text style={styles.header}>Your Profile</Text>
 
       <View style={styles.userDetails}>

@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from 'react-native';
 import {useAuthStore} from '../store/authStore';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -93,6 +94,10 @@ const RegisterScreen = ({navigation}: Props) => {
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        backgroundColor={theme.titleBar}
+        barStyle={theme.statusBarStyle}
+      />
       <Text style={styles.header}>Create Account</Text>
 
       <TextInput
