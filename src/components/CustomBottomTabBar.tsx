@@ -31,7 +31,7 @@ export const CustomBottomTabBar: React.FC<CustomBottomTabBarProps> = ({
       bottom: 0,
       left: 0,
       right: 0,
-      height: 90,
+      height: 70,
       paddingBottom: 20,
     },
     tabBar: {

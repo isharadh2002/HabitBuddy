@@ -61,6 +61,12 @@ const ProfileScreen = () => {
       marginBottom: 10,
       alignSelf: 'center',
     },
+    logoutButton: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 10,
+    },
   });
 
   const handleLogout = () => {
@@ -88,8 +94,11 @@ const ProfileScreen = () => {
         <Text style={styles.detailText}>Gender: {currentUser?.gender}</Text>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleLogout}>
+      <TouchableOpacity
+        style={[styles.button, styles.logoutButton]}
+        onPress={handleLogout}>
         <Text style={styles.buttonText}>Logout</Text>
+        <Icon name="logout" size={25} color="white" />
       </TouchableOpacity>
     </View>
   );
