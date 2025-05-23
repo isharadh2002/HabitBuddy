@@ -1,13 +1,27 @@
 // App.tsx
+import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {AppNavigator} from './navigation/AppNavigator';
 import {useAuthStore} from './store/authStore';
+import LoadingScreen from './screens/LoadingScreen';
 
 const App = () => {
   const {hasHydrated} = useAuthStore.persist;
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!hasHydrated) {
-    return null; // or loading screen
+  useEffect(() => {
+    // Add a minimum 2-second loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    // If hydration completes before 2 seconds, still wait for the full duration
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading screen if still loading OR if store hasn't hydrated
+  if (isLoading || !hasHydrated) {
+    return <LoadingScreen />;
   }
 
   return (

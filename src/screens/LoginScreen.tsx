@@ -75,6 +75,10 @@ const LoginScreen = ({navigation}: Props) => {
 
     login(email, password);
 
+    if (!useAuthStore.getState().isLoggedIn) {
+      Alert.alert('Error', 'Invalid credentials');
+    }
+
     /*if (useAuthStore.getState().isLoggedIn) {
       navigation.navigate('Home');
     } else {
