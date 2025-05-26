@@ -12,11 +12,13 @@ import {
 } from 'react-native';
 import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore} from '../store/habitStore';
+import {useAuthStore} from '../store/authStore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const AddHabitScreen = () => {
   const {theme} = useTheme();
   const addHabit = useHabitStore(state => state.addHabit);
+  const currentUser = useAuthStore(state => state.currentUser);
 
   const [habitName, setHabitName] = useState('');
   const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily');
@@ -147,7 +149,12 @@ const AddHabitScreen = () => {
       return;
     }
 
-    addHabit(habitName.trim(), frequency);
+    if (!currentUser?.email) {
+      Alert.alert('Error', 'User not logged in');
+      return;
+    }
+
+    addHabit(habitName.trim(), frequency, currentUser.email);
     setHabitName('');
     Alert.alert(
       'Success',

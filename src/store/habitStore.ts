@@ -9,16 +9,31 @@ export interface Habit {
   frequency: 'daily' | 'weekly';
   createdAt: Date;
   completedDates: string[]; // Array of date strings (YYYY-MM-DD)
+  userEmail: string; // Add user email to associate habit with user
 }
 
 interface HabitState {
   habits: Habit[];
-  addHabit: (name: string, frequency: 'daily' | 'weekly') => void;
-  toggleHabitCompletion: (habitId: string, date: string) => void;
-  isHabitCompletedToday: (habitId: string) => boolean;
-  getTodaysProgress: () => number;
-  getWeeklyProgress: () => {day: string; completed: number; total: number}[];
-  getHabitsByFilter: (filter: 'all' | 'today' | 'completed') => Habit[];
+  addHabit: (
+    name: string,
+    frequency: 'daily' | 'weekly',
+    userEmail: string,
+  ) => void;
+  toggleHabitCompletion: (
+    habitId: string,
+    date: string,
+    userEmail: string,
+  ) => void;
+  isHabitCompletedToday: (habitId: string, userEmail: string) => boolean;
+  getTodaysProgress: (userEmail: string) => number;
+  getWeeklyProgress: (
+    userEmail: string,
+  ) => {day: string; completed: number; total: number}[];
+  getHabitsByFilter: (
+    filter: 'all' | 'today' | 'completed',
+    userEmail: string,
+  ) => Habit[];
+  getUserHabits: (userEmail: string) => Habit[];
 }
 
 const getTodayString = () => {
@@ -45,21 +60,23 @@ export const useHabitStore = create<HabitState>()(
     (set, get) => ({
       habits: [],
 
-      addHabit: (name, frequency) => {
+      addHabit: (name, frequency, userEmail) => {
         const newHabit: Habit = {
           id: Date.now().toString(),
           name,
           frequency,
           createdAt: new Date(),
           completedDates: [],
+          userEmail, // Associate habit with user
         };
         set(state => ({habits: [...state.habits, newHabit]}));
       },
 
-      toggleHabitCompletion: (habitId, date) => {
+      toggleHabitCompletion: (habitId, date, userEmail) => {
         set(state => ({
           habits: state.habits.map(habit => {
-            if (habit.id === habitId) {
+            // Only toggle if habit belongs to current user
+            if (habit.id === habitId && habit.userEmail === userEmail) {
               const isCompleted = habit.completedDates.includes(date);
               return {
                 ...habit,
@@ -73,15 +90,22 @@ export const useHabitStore = create<HabitState>()(
         }));
       },
 
-      isHabitCompletedToday: habitId => {
+      getUserHabits: userEmail => {
+        return get().habits.filter(habit => habit.userEmail === userEmail);
+      },
+
+      isHabitCompletedToday: (habitId, userEmail) => {
         const today = getTodayString();
-        const habit = get().habits.find(h => h.id === habitId);
+        const habit = get().habits.find(
+          h => h.id === habitId && h.userEmail === userEmail,
+        );
         return habit ? habit.completedDates.includes(today) : false;
       },
 
-      getTodaysProgress: () => {
+      getTodaysProgress: userEmail => {
         const today = getTodayString();
-        const dailyHabits = get().habits.filter(h => h.frequency === 'daily');
+        const userHabits = get().getUserHabits(userEmail);
+        const dailyHabits = userHabits.filter(h => h.frequency === 'daily');
         if (dailyHabits.length === 0) return 0;
 
         const completedToday = dailyHabits.filter(habit =>
@@ -91,9 +115,10 @@ export const useHabitStore = create<HabitState>()(
         return Math.round((completedToday / dailyHabits.length) * 100);
       },
 
-      getWeeklyProgress: () => {
+      getWeeklyProgress: userEmail => {
         const weekDates = getWeekDates();
-        const dailyHabits = get().habits.filter(h => h.frequency === 'daily');
+        const userHabits = get().getUserHabits(userEmail);
+        const dailyHabits = userHabits.filter(h => h.frequency === 'daily');
 
         return weekDates.map(date => {
           const completedOnDate = dailyHabits.filter(habit =>
@@ -108,17 +133,17 @@ export const useHabitStore = create<HabitState>()(
         });
       },
 
-      getHabitsByFilter: filter => {
-        const habits = get().habits;
+      getHabitsByFilter: (filter, userEmail) => {
+        const userHabits = get().getUserHabits(userEmail);
         const today = getTodayString();
 
         switch (filter) {
           case 'today':
-            return habits.filter(h => h.frequency === 'daily');
+            return userHabits.filter(h => h.frequency === 'daily');
           case 'completed':
-            return habits.filter(h => h.completedDates.includes(today));
+            return userHabits.filter(h => h.completedDates.includes(today));
           default:
-            return habits;
+            return userHabits;
         }
       },
     }),

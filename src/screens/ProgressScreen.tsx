@@ -10,24 +10,36 @@ import {
 } from 'react-native';
 import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore} from '../store/habitStore';
+import {useAuthStore} from '../store/authStore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const {width} = Dimensions.get('window');
 
 const ProgressScreen = () => {
   const {theme} = useTheme();
-  const {habits, getTodaysProgress, getWeeklyProgress, isHabitCompletedToday} =
-    useHabitStore();
+  const currentUser = useAuthStore(state => state.currentUser);
+  const {
+    getUserHabits,
+    getTodaysProgress,
+    getWeeklyProgress,
+    isHabitCompletedToday,
+  } = useHabitStore();
 
-  const todaysProgress = getTodaysProgress();
-  const weeklyProgress = getWeeklyProgress();
-  const dailyHabits = habits.filter(h => h.frequency === 'daily');
-  const weeklyHabits = habits.filter(h => h.frequency === 'weekly');
+  // Get user-specific data
+  const userHabits = currentUser ? getUserHabits(currentUser.email) : [];
+  const todaysProgress = currentUser ? getTodaysProgress(currentUser.email) : 0;
+  const weeklyProgress = currentUser
+    ? getWeeklyProgress(currentUser.email)
+    : [];
+  const dailyHabits = userHabits.filter(h => h.frequency === 'daily');
+  const weeklyHabits = userHabits.filter(h => h.frequency === 'weekly');
 
   // Get today's completed habits
-  const completedTodayCount = dailyHabits.filter(habit =>
-    isHabitCompletedToday(habit.id),
-  ).length;
+  const completedTodayCount = currentUser
+    ? dailyHabits.filter(habit =>
+        isHabitCompletedToday(habit.id, currentUser.email),
+      ).length
+    : 0;
 
   const styles = StyleSheet.create({
     container: {
@@ -226,7 +238,38 @@ const ProgressScreen = () => {
     return '⭐ Ready to build some great habits today?';
   };
 
-  if (habits.length === 0) {
+  // Handle case when user is not logged in
+  if (!currentUser) {
+    return (
+      <View style={styles.container}>
+        <StatusBar
+          backgroundColor={theme.statusBarBackground}
+          barStyle={theme.statusBarStyle}
+        />
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <Icon name="trending-up" size={32} color={theme.buttonBackground} />
+            <Text style={styles.title}>Progress</Text>
+          </View>
+
+          <View style={styles.emptyState}>
+            <Icon
+              name="person"
+              size={64}
+              color={theme.buttonBackground}
+              style={styles.emptyIcon}
+            />
+            <Text style={styles.emptyTitle}>Please log in</Text>
+            <Text style={styles.emptySubtitle}>
+              You need to be logged in to view your progress.
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  if (userHabits.length === 0) {
     return (
       <View style={styles.container}>
         <StatusBar
@@ -316,7 +359,7 @@ const ProgressScreen = () => {
               <Text style={styles.statLabel}>Weekly{'\n'}Habits</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{habits.length}</Text>
+              <Text style={styles.statNumber}>{userHabits.length}</Text>
               <Text style={styles.statLabel}>Total{'\n'}Habits</Text>
             </View>
           </View>
@@ -380,14 +423,18 @@ const ProgressScreen = () => {
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
               <Text style={styles.statNumber}>
-                {Math.round(
-                  weeklyProgress.reduce(
-                    (acc, day) =>
-                      acc +
-                      (day.total > 0 ? (day.completed / day.total) * 100 : 0),
-                    0,
-                  ) / 7,
-                )}
+                {weeklyProgress.length > 0
+                  ? Math.round(
+                      weeklyProgress.reduce(
+                        (acc, day) =>
+                          acc +
+                          (day.total > 0
+                            ? (day.completed / day.total) * 100
+                            : 0),
+                        0,
+                      ) / weeklyProgress.length,
+                    )
+                  : 0}
                 %
               </Text>
               <Text style={styles.statLabel}>7-Day{'\n'}Average</Text>

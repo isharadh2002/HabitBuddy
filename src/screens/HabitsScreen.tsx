@@ -10,18 +10,16 @@ import {
 } from 'react-native';
 import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore, Habit} from '../store/habitStore';
+import {useAuthStore} from '../store/authStore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type FilterType = 'all' | 'today' | 'completed';
 
 const HabitsScreen = () => {
   const {theme} = useTheme();
-  const {
-    habits,
-    toggleHabitCompletion,
-    isHabitCompletedToday,
-    getHabitsByFilter,
-  } = useHabitStore();
+  const {toggleHabitCompletion, isHabitCompletedToday, getHabitsByFilter} =
+    useHabitStore();
+  const currentUser = useAuthStore(state => state.currentUser);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
@@ -29,7 +27,9 @@ const HabitsScreen = () => {
     return new Date().toISOString().split('T')[0];
   };
 
-  const filteredHabits = getHabitsByFilter(activeFilter);
+  const filteredHabits = currentUser
+    ? getHabitsByFilter(activeFilter, currentUser.email)
+    : [];
 
   const styles = StyleSheet.create({
     container: {
@@ -175,12 +175,16 @@ const HabitsScreen = () => {
   });
 
   const handleToggleCompletion = (habitId: string) => {
+    if (!currentUser?.email) return;
+
     const today = getTodayString();
-    toggleHabitCompletion(habitId, today);
+    toggleHabitCompletion(habitId, today, currentUser.email);
   };
 
   const renderHabitItem = ({item}: {item: Habit}) => {
-    const isCompleted = isHabitCompletedToday(item.id);
+    if (!currentUser?.email) return null;
+
+    const isCompleted = isHabitCompletedToday(item.id, currentUser.email);
 
     return (
       <View style={styles.habitCard}>
@@ -252,6 +256,23 @@ const HabitsScreen = () => {
     {key: 'today' as FilterType, label: "Today's Habits"},
     {key: 'completed' as FilterType, label: 'Completed'},
   ];
+
+  if (!currentUser) {
+    return (
+      <View style={styles.container}>
+        <StatusBar
+          backgroundColor={theme.statusBarBackground}
+          barStyle={theme.statusBarStyle}
+        />
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyTitle}>Please log in</Text>
+          <Text style={styles.emptySubtitle}>
+            You need to be logged in to view your habits.
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

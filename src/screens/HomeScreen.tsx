@@ -15,17 +15,24 @@ import {useTheme} from '../theme/ThemeContext';
 
 const HomeScreen = () => {
   const currentUser = useAuthStore(state => state.currentUser);
-  const {habits, getTodaysProgress, isHabitCompletedToday} = useHabitStore();
+  const {getUserHabits, getTodaysProgress, isHabitCompletedToday} =
+    useHabitStore();
   const {theme} = useTheme();
 
-  const todaysProgress = getTodaysProgress();
-  const dailyHabits = habits.filter(h => h.frequency === 'daily');
-  const completedToday = dailyHabits.filter(habit =>
-    isHabitCompletedToday(habit.id),
-  );
-  const pendingToday = dailyHabits.filter(
-    habit => !isHabitCompletedToday(habit.id),
-  );
+  // Get user-specific data
+  const userHabits = currentUser ? getUserHabits(currentUser.email) : [];
+  const todaysProgress = currentUser ? getTodaysProgress(currentUser.email) : 0;
+  const dailyHabits = userHabits.filter(h => h.frequency === 'daily');
+  const completedToday = currentUser
+    ? dailyHabits.filter(habit =>
+        isHabitCompletedToday(habit.id, currentUser.email),
+      )
+    : [];
+  const pendingToday = currentUser
+    ? dailyHabits.filter(
+        habit => !isHabitCompletedToday(habit.id, currentUser.email),
+      )
+    : [];
 
   const styles = StyleSheet.create({
     container: {
@@ -227,6 +234,24 @@ const HomeScreen = () => {
 
     return isCompleted ? 'check-circle' : 'radio-button-unchecked';
   };
+
+  // Handle case when user is not logged in
+  if (!currentUser) {
+    return (
+      <View style={styles.container}>
+        <StatusBar
+          backgroundColor={theme.statusBarBackground}
+          barStyle={theme.statusBarStyle}
+        />
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyTitle}>Please log in</Text>
+          <Text style={styles.emptySubtitle}>
+            You need to be logged in to view your habits.
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   if (dailyHabits.length === 0) {
     return (
