@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {RootStackParamList} from './types';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 import {MainTabNavigator} from './MainTabNavigator';
 import {useAuthStore} from '../store/authStore';
 import {useTheme} from '../theme/ThemeContext';
@@ -26,11 +27,18 @@ export const AppNavigator = () => {
         headerShown: true,
       }}>
       {isLoggedIn ? (
-        <Stack.Screen
-          name="MainTabs"
-          component={MainTabNavigator}
-          options={{headerShown: false}}
-        />
+        <>
+          <Stack.Screen
+            name="MainTabs"
+            component={MainTabNavigator}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="EditProfile"
+            component={EditProfileScreen}
+            options={{headerShown: false}}
+          />
+        </>
       ) : (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />

@@ -16,6 +16,7 @@ interface AuthState {
   register: (user: User) => void;
   login: (email: string, password: string) => void;
   logout: () => void;
+  updateUser: (oldEmail: string, updatedUser: User) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -34,6 +35,17 @@ export const useAuthStore = create<AuthState>()(
         }
       },
       logout: () => set({currentUser: null, isLoggedIn: false}),
+      updateUser: (oldEmail, updatedUser) => {
+        set(state => ({
+          users: state.users.map(user =>
+            user.email === oldEmail ? updatedUser : user,
+          ),
+          currentUser:
+            state.currentUser?.email === oldEmail
+              ? updatedUser
+              : state.currentUser,
+        }));
+      },
     }),
     {
       name: 'auth-storage',

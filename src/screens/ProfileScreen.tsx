@@ -12,8 +12,14 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useAuthStore} from '../store/authStore';
 import {useTheme} from '../theme/ThemeContext';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../navigation/types';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const ProfileScreen = () => {
+  const navigation = useNavigation<NavigationProp>();
   const currentUser = useAuthStore(state => state.currentUser);
   const logout = useAuthStore(state => state.logout);
   const {theme, themePreference, setThemePreference} = useTheme();
@@ -47,6 +53,10 @@ const ProfileScreen = () => {
   const handleSelectTheme = (value: 'light' | 'dark' | 'system') => {
     setThemePreference(value);
     setModalVisible(false);
+  };
+
+  const handleEditProfile = () => {
+    navigation.navigate('EditProfile');
   };
 
   const styles = StyleSheet.create({
@@ -92,9 +102,18 @@ const ProfileScreen = () => {
       shadowOpacity: 0.1,
       shadowRadius: 2,
     },
+    menuButtonContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    menuButtonIcon: {
+      marginRight: 12,
+    },
     menuButtonText: {
       color: theme.text,
       fontSize: 16,
+      flex: 1,
     },
     modalOverlay: {
       flex: 1,
@@ -178,10 +197,34 @@ const ProfileScreen = () => {
       </View>
 
       <TouchableOpacity
+        onPress={handleEditProfile}
+        style={styles.menuButton}
+        activeOpacity={0.7}>
+        <View style={styles.menuButtonContent}>
+          <Icon
+            name="edit"
+            size={20}
+            color={theme.text}
+            style={styles.menuButtonIcon}
+          />
+          <Text style={styles.menuButtonText}>Edit Profile</Text>
+        </View>
+        <Icon name="chevron-right" size={24} color={theme.text} />
+      </TouchableOpacity>
+
+      <TouchableOpacity
         onPress={() => setModalVisible(true)}
         style={styles.menuButton}
         activeOpacity={0.7}>
-        <Text style={styles.menuButtonText}>Theme: {currentThemeLabel}</Text>
+        <View style={styles.menuButtonContent}>
+          <Icon
+            name="palette"
+            size={20}
+            color={theme.text}
+            style={styles.menuButtonIcon}
+          />
+          <Text style={styles.menuButtonText}>Theme: {currentThemeLabel}</Text>
+        </View>
         <Icon name="arrow-drop-down" size={24} color={theme.text} />
       </TouchableOpacity>
 
