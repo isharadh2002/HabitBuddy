@@ -11,7 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useAuthStore} from '../store/authStore';
 import {useHabitStore} from '../store/habitStore';
-import {useTheme} from '../theme';
+import {useTheme} from '../theme/ThemeContext';
 
 const HomeScreen = () => {
   const currentUser = useAuthStore(state => state.currentUser);

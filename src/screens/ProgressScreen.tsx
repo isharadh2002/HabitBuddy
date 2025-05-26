@@ -8,7 +8,7 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-import {useTheme} from '../theme';
+import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore} from '../store/habitStore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 

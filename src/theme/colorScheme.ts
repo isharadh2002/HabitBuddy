@@ -43,9 +43,9 @@ export const darkTheme: Theme = {
   placeholderText: '#AAAAAA',
 };
 
-export const useTheme = () => {
+/*export const useTheme = () => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const theme = isDarkMode ? darkTheme : lightTheme;
   return {theme, isDarkMode};
-};
+};*/

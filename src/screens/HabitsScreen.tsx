@@ -8,7 +8,7 @@ import {
   StyleSheet,
   StatusBar,
 } from 'react-native';
-import {useTheme} from '../theme';
+import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore, Habit} from '../store/habitStore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 

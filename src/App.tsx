@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {AppNavigator} from './navigation/AppNavigator';
 import {useAuthStore} from './store/authStore';
 import LoadingScreen from './screens/LoadingScreen';
+import {ThemeProvider} from './theme/ThemeContext';
 
 const App = () => {
   const {hasHydrated} = useAuthStore.persist;
@@ -25,9 +26,11 @@ const App = () => {
   }
 
   return (
-    <NavigationContainer>
-      <AppNavigator />
-    </NavigationContainer>
+    <ThemeProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </ThemeProvider>
   );
 };
 

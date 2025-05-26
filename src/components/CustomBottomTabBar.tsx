@@ -2,7 +2,7 @@
 import React from 'react';
 import {View, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useTheme} from '../theme';
+import {useTheme} from '../theme/ThemeContext';
 
 const {width} = Dimensions.get('window');
 

@@ -5,7 +5,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import {MainTabNavigator} from './MainTabNavigator';
 import {useAuthStore} from '../store/authStore';
-import {useTheme} from '../theme';
+import {useTheme} from '../theme/ThemeContext';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
