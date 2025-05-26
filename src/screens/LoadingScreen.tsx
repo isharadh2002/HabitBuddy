@@ -67,6 +67,14 @@ const LoadingScreen = () => {
       alignItems: 'center',
       justifyContent: 'center',
     },
+    logoContainer: {
+      position: 'relative',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 120,
+      height: 120,
+      marginBottom: 30,
+    },
     iconContainer: {
       width: 100,
       height: 100,
@@ -74,21 +82,26 @@ const LoadingScreen = () => {
       backgroundColor: theme.buttonBackground,
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 30,
       shadowColor: '#000',
       shadowOffset: {width: 0, height: 4},
       shadowOpacity: 0.3,
       shadowRadius: 8,
       elevation: 8,
+      zIndex: 2,
     },
     loadingSpinner: {
       position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       width: 120,
       height: 120,
       borderRadius: 60,
       borderWidth: 3,
       borderColor: theme.buttonBackground + '30',
       borderTopColor: theme.buttonBackground,
+      zIndex: 1,
     },
     title: {
       fontSize: 28,
@@ -136,11 +149,10 @@ const LoadingScreen = () => {
             transform: [{scale: scaleAnim}],
           },
         ]}>
-        <View style={{position: 'relative', alignItems: 'center'}}>
+        <View style={styles.logoContainer}>
           <Animated.View
             style={[styles.loadingSpinner, {transform: [{rotate: spin}]}]}
           />
-
           <View style={styles.iconContainer}>
             <Icon name="self-improvement" size={40} color="white" />
           </View>
