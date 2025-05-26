@@ -6,9 +6,9 @@ import {CustomBottomTabBar} from '../components/CustomBottomTabBar';
 
 // Import your screens
 import HomeScreen from '../screens/HomeScreen';
-import SearchScreen from '../screens/SearchScreen';
-import AddScreen from '../screens/AddScreen';
-import StatsScreen from '../screens/StatsScreen';
+import HabitsScreen from '../screens/HabitsScreen';
+import AddHabitScreen from '../screens/AddHabitScreen';
+import ProgressScreen from '../screens/ProgressScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 export const MainTabNavigator = () => {
@@ -26,12 +26,12 @@ export const MainTabNavigator = () => {
     switch (activeTab) {
       case 'home':
         return <HomeScreen />;
-      case 'search':
-        return <SearchScreen />;
-      case 'center':
-        return <AddScreen />;
-      case 'stats':
-        return <StatsScreen />;
+      case 'habits':
+        return <HabitsScreen />;
+      case 'add':
+        return <AddHabitScreen />;
+      case 'progress':
+        return <ProgressScreen />;
       case 'profile':
         return <ProfileScreen />;
       default:

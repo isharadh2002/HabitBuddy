@@ -1,13 +1,31 @@
 // src/screens/HomeScreen.tsx
 import React from 'react';
-import {View, Text, StyleSheet, StatusBar, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useAuthStore} from '../store/authStore';
+import {useHabitStore} from '../store/habitStore';
 import {useTheme} from '../theme';
 
 const HomeScreen = () => {
   const currentUser = useAuthStore(state => state.currentUser);
+  const {habits, getTodaysProgress, isHabitCompletedToday} = useHabitStore();
   const {theme} = useTheme();
+
+  const todaysProgress = getTodaysProgress();
+  const dailyHabits = habits.filter(h => h.frequency === 'daily');
+  const completedToday = dailyHabits.filter(habit =>
+    isHabitCompletedToday(habit.id),
+  );
+  const pendingToday = dailyHabits.filter(
+    habit => !isHabitCompletedToday(habit.id),
+  );
 
   const styles = StyleSheet.create({
     container: {
@@ -16,6 +34,7 @@ const HomeScreen = () => {
     },
     content: {
       padding: 20,
+      paddingBottom: 100,
     },
     greeting: {
       fontSize: 32,
@@ -73,6 +92,14 @@ const HomeScreen = () => {
       fontWeight: '600',
       color: theme.text,
       marginBottom: 15,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    sectionCount: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.text + '70',
+      marginLeft: 5,
     },
     habitCard: {
       backgroundColor: theme.cardBackground,
@@ -96,6 +123,9 @@ const HomeScreen = () => {
       justifyContent: 'center',
       marginRight: 15,
     },
+    habitIconCompleted: {
+      backgroundColor: '#4CAF50' + '20',
+    },
     habitInfo: {
       flex: 1,
     },
@@ -112,21 +142,50 @@ const HomeScreen = () => {
     habitMeta: {
       alignItems: 'center',
     },
-    habitTime: {
-      fontSize: 12,
-      color: theme.text + '60',
-      marginBottom: 5,
-    },
-    chatButton: {
-      backgroundColor: theme.buttonBackground,
+    statusBadge: {
       paddingHorizontal: 12,
       paddingVertical: 6,
       borderRadius: 15,
+      marginBottom: 5,
     },
-    chatButtonText: {
+    statusBadgeCompleted: {
+      backgroundColor: '#4CAF50',
+    },
+    statusBadgePending: {
+      backgroundColor: theme.buttonBackground,
+    },
+    statusText: {
       color: 'white',
       fontSize: 12,
       fontWeight: '600',
+    },
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 40,
+    },
+    emptyIcon: {
+      marginBottom: 15,
+    },
+    emptyTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 8,
+    },
+    emptySubtitle: {
+      fontSize: 14,
+      color: theme.text + '70',
+      textAlign: 'center',
+      paddingHorizontal: 40,
+      lineHeight: 20,
+    },
+    motivationText: {
+      fontSize: 16,
+      color: 'white',
+      textAlign: 'center',
+      fontStyle: 'italic',
+      marginTop: 5,
     },
   });
 
@@ -140,6 +199,66 @@ const HomeScreen = () => {
     });
   };
 
+  const getMotivationalMessage = (progress: number) => {
+    if (progress === 100) return '🎉 Perfect day achieved!';
+    if (progress >= 75) return "🔥 You're on fire today!";
+    if (progress >= 50) return '💪 Great progress!';
+    if (progress >= 25) return '🌱 Keep going!';
+    return "⭐ Let's build some habits!";
+  };
+
+  const getHabitIcon = (habitName: string, isCompleted: boolean) => {
+    const name = habitName.toLowerCase();
+    if (name.includes('water') || name.includes('drink')) return 'local-drink';
+    if (
+      name.includes('exercise') ||
+      name.includes('workout') ||
+      name.includes('run')
+    )
+      return 'fitness-center';
+    if (name.includes('read') || name.includes('book')) return 'menu-book';
+    if (name.includes('meditate') || name.includes('meditation'))
+      return 'self-improvement';
+    if (name.includes('journal') || name.includes('write')) return 'edit';
+    if (name.includes('clean') || name.includes('tidy'))
+      return 'cleaning-services';
+    if (name.includes('sleep') || name.includes('bed')) return 'bedtime';
+    if (name.includes('walk')) return 'directions-walk';
+
+    return isCompleted ? 'check-circle' : 'radio-button-unchecked';
+  };
+
+  if (dailyHabits.length === 0) {
+    return (
+      <View style={styles.container}>
+        <StatusBar
+          backgroundColor={theme.statusBarBackground}
+          barStyle={theme.statusBarStyle}
+        />
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <Text style={styles.greeting}>
+            Hi, {currentUser?.name?.split(' ')[0] || 'User'}!
+          </Text>
+          <Text style={styles.date}>{getCurrentDate()}</Text>
+
+          <View style={styles.emptyState}>
+            <Icon
+              name="emoji-nature"
+              size={64}
+              color={theme.buttonBackground}
+              style={styles.emptyIcon}
+            />
+            <Text style={styles.emptyTitle}>Ready to start your journey?</Text>
+            <Text style={styles.emptySubtitle}>
+              Add your first habit and begin building a better version of
+              yourself, one day at a time!
+            </Text>
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -148,68 +267,105 @@ const HomeScreen = () => {
       />
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.greeting}>
-          Hi, {currentUser?.name?.split(' ')[0] || 'User'}
+          Hi, {currentUser?.name?.split(' ')[0] || 'User'}!
         </Text>
         <Text style={styles.date}>{getCurrentDate()}</Text>
 
-        {/* Daily Goals Progress */}
+        {/* Daily Progress */}
         <View style={styles.progressCard}>
           <View style={styles.progressHeader}>
-            <Text style={styles.progressPercentage}>25%</Text>
+            <Text style={styles.progressPercentage}>{todaysProgress}%</Text>
             <View style={{flex: 1}}>
-              <Text style={styles.progressTitle}>Daily Goals</Text>
+              <Text style={styles.progressTitle}>Daily Progress</Text>
               <Text style={styles.progressSubtitle}>
-                Almost there! Goals in reach!
+                {getMotivationalMessage(todaysProgress)}
               </Text>
             </View>
           </View>
-          <Text style={styles.progressStats}>1/5 habits 1/3 challenges</Text>
+          <Text style={styles.progressStats}>
+            {completedToday.length}/{dailyHabits.length} habits completed today
+          </Text>
+          <Text style={styles.motivationText}>
+            {getMotivationalMessage(todaysProgress)}
+          </Text>
         </View>
 
-        {/* In Progress Section */}
-        <Text style={styles.sectionHeader}>IN PROGRESS (2)</Text>
-
-        <View style={styles.habitCard}>
-          <View style={styles.habitIcon}>
-            <Icon
-              name="cleaning-services"
-              size={24}
-              color={theme.buttonBackground}
-            />
-          </View>
-          <View style={styles.habitInfo}>
-            <Text style={styles.habitTitle}>Tidying Challenge</Text>
-            <Text style={styles.habitSubtitle}>
-              Separate items for donation and trash
-            </Text>
-          </View>
-          <View style={styles.habitMeta}>
-            <Text style={styles.habitTime}>07:41:12</Text>
-            <View style={styles.chatButton}>
-              <Text style={styles.chatButtonText}>Chat</Text>
+        {/* Pending Habits */}
+        {pendingToday.length > 0 && (
+          <>
+            <View style={styles.sectionHeader}>
+              <Text
+                style={{fontSize: 18, fontWeight: '600', color: theme.text}}>
+                PENDING TODAY
+              </Text>
+              <Text style={styles.sectionCount}>({pendingToday.length})</Text>
             </View>
-          </View>
-        </View>
 
-        <View style={styles.habitCard}>
-          <View style={styles.habitIcon}>
-            <Icon
-              name="self-improvement"
-              size={24}
-              color={theme.buttonBackground}
-            />
-          </View>
-          <View style={styles.habitInfo}>
-            <Text style={styles.habitTitle}>Happy Habits Challenge</Text>
-            <Text style={styles.habitSubtitle}>Daily mindfulness practice</Text>
-          </View>
-          <View style={styles.habitMeta}>
-            <Text style={styles.habitTime}>02:15:30</Text>
-            <View style={styles.chatButton}>
-              <Text style={styles.chatButtonText}>Chat</Text>
+            {pendingToday.slice(0, 3).map(habit => (
+              <View key={habit.id} style={styles.habitCard}>
+                <View style={styles.habitIcon}>
+                  <Icon
+                    name={getHabitIcon(habit.name, false)}
+                    size={24}
+                    color={theme.buttonBackground}
+                  />
+                </View>
+                <View style={styles.habitInfo}>
+                  <Text style={styles.habitTitle}>{habit.name}</Text>
+                  <Text style={styles.habitSubtitle}>
+                    {habit.frequency.charAt(0).toUpperCase() +
+                      habit.frequency.slice(1)}{' '}
+                    habit
+                  </Text>
+                </View>
+                <View style={styles.habitMeta}>
+                  <View style={[styles.statusBadge, styles.statusBadgePending]}>
+                    <Text style={styles.statusText}>Pending</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </>
+        )}
+
+        {/* Completed Habits */}
+        {completedToday.length > 0 && (
+          <>
+            <View style={styles.sectionHeader}>
+              <Text
+                style={{fontSize: 18, fontWeight: '600', color: theme.text}}>
+                COMPLETED TODAY
+              </Text>
+              <Text style={styles.sectionCount}>({completedToday.length})</Text>
             </View>
-          </View>
-        </View>
+
+            {completedToday.slice(0, 3).map(habit => (
+              <View key={habit.id} style={styles.habitCard}>
+                <View style={[styles.habitIcon, styles.habitIconCompleted]}>
+                  <Icon
+                    name={getHabitIcon(habit.name, true)}
+                    size={24}
+                    color="#4CAF50"
+                  />
+                </View>
+                <View style={styles.habitInfo}>
+                  <Text style={styles.habitTitle}>{habit.name}</Text>
+                  <Text style={styles.habitSubtitle}>
+                    {habit.frequency.charAt(0).toUpperCase() +
+                      habit.frequency.slice(1)}{' '}
+                    habit
+                  </Text>
+                </View>
+                <View style={styles.habitMeta}>
+                  <View
+                    style={[styles.statusBadge, styles.statusBadgeCompleted]}>
+                    <Text style={styles.statusText}>Completed</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </>
+        )}
       </ScrollView>
     </View>
   );

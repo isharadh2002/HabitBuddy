@@ -19,9 +19,9 @@ export const CustomBottomTabBar: React.FC<CustomBottomTabBarProps> = ({
 
   const tabs = [
     {name: 'home', icon: 'home'},
-    {name: 'search', icon: 'search'},
-    {name: 'center', icon: 'add', isCenter: true},
-    {name: 'stats', icon: 'bar-chart'},
+    {name: 'habits', icon: 'list'},
+    {name: 'add', icon: 'add', isCenter: true},
+    {name: 'progress', icon: 'trending-up'},
     {name: 'profile', icon: 'person'},
   ];
 
@@ -123,7 +123,7 @@ export const CustomBottomTabBar: React.FC<CustomBottomTabBarProps> = ({
           {/* Center floating button */}
           <TouchableOpacity
             style={styles.centerButton}
-            onPress={() => onTabPress('center')}
+            onPress={() => onTabPress('add')}
             activeOpacity={0.8}>
             <Icon name="add" size={30} color="white" />
           </TouchableOpacity>
