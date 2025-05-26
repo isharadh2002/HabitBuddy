@@ -92,7 +92,6 @@ HabitBuddy/
 - Daily reminder notifications
 - Streak tracking
 - Authentication and cloud backup
-- Dark mode
 
 ---
 
