@@ -20,8 +20,6 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 const RegisterScreen = ({navigation}: Props) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [birthday, setBirthday] = useState('');
-  const [gender, setGender] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const register = useAuthStore(state => state.register);
@@ -77,7 +75,7 @@ const RegisterScreen = ({navigation}: Props) => {
   });
 
   const handleRegister = () => {
-    if (!name || !email || !birthday || !gender || !password) {
+    if (!name || !email || !password) {
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
@@ -87,7 +85,7 @@ const RegisterScreen = ({navigation}: Props) => {
       return;
     }
 
-    register({name, email, birthday, gender, password});
+    register({name, email, password});
     Alert.alert('Success', 'Registration successful! Please login');
     navigation.navigate('Login');
   };
@@ -116,22 +114,6 @@ const RegisterScreen = ({navigation}: Props) => {
         style={styles.input}
         keyboardType="email-address"
         autoCapitalize="none"
-      />
-
-      <TextInput
-        placeholder="Birthday (YYYY-MM-DD)"
-        placeholderTextColor={theme.placeholderText}
-        value={birthday}
-        onChangeText={setBirthday}
-        style={styles.input}
-      />
-
-      <TextInput
-        placeholder="Gender"
-        placeholderTextColor={theme.placeholderText}
-        value={gender}
-        onChangeText={setGender}
-        style={styles.input}
       />
 
       <TextInput

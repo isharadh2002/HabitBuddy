@@ -90,8 +90,6 @@ const ProfileScreen = () => {
         />
         <Text style={styles.detailText}>Name: {currentUser?.name}</Text>
         <Text style={styles.detailText}>Email: {currentUser?.email}</Text>
-        <Text style={styles.detailText}>Birthday: {currentUser?.birthday}</Text>
-        <Text style={styles.detailText}>Gender: {currentUser?.gender}</Text>
       </View>
 
       <TouchableOpacity
