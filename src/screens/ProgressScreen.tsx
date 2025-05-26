@@ -36,7 +36,6 @@ const ProgressScreen = () => {
     },
     content: {
       padding: 20,
-      paddingBottom: 100,
     },
     header: {
       flexDirection: 'row',
@@ -150,7 +149,7 @@ const ProgressScreen = () => {
     chartContainer: {
       flexDirection: 'row',
       justifyContent: 'space-around',
-      alignItems: 'end',
+      alignItems: 'flex-end',
       height: 120,
       paddingTop: 20,
     },
@@ -211,6 +210,10 @@ const ProgressScreen = () => {
       fontSize: 24,
       textAlign: 'center',
       marginBottom: 10,
+    },
+    emptyViewContainer: {
+      height: 100,
+      width: '100%',
     },
   });
 
@@ -407,6 +410,7 @@ const ProgressScreen = () => {
             </View>
           </View>
         </View>
+        <View style={styles.emptyViewContainer}></View>
       </ScrollView>
     </View>
   );

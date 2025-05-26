@@ -22,7 +22,11 @@ const App = () => {
 
   // Show loading screen if still loading OR if store hasn't hydrated
   if (isLoading || !hasHydrated) {
-    return <LoadingScreen />;
+    return (
+      <ThemeProvider>
+        <LoadingScreen />
+      </ThemeProvider>
+    );
   }
 
   return (
