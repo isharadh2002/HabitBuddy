@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  Alert,
 } from 'react-native';
 import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore, Habit} from '../store/habitStore';
@@ -17,8 +18,12 @@ type FilterType = 'all' | 'today' | 'completed';
 
 const HabitsScreen = () => {
   const {theme} = useTheme();
-  const {toggleHabitCompletion, isHabitCompletedToday, getHabitsByFilter} =
-    useHabitStore();
+  const {
+    toggleHabitCompletion,
+    isHabitCompletedToday,
+    getHabitsByFilter,
+    removeHabit,
+  } = useHabitStore();
   const currentUser = useAuthStore(state => state.currentUser);
 
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
@@ -127,6 +132,10 @@ const HabitsScreen = () => {
     statusPending: {
       color: theme.text + '70',
     },
+    buttonContainer: {
+      alignItems: 'flex-end',
+      gap: 8,
+    },
     completeButton: {
       backgroundColor: theme.buttonBackground,
       paddingHorizontal: 20,
@@ -143,6 +152,20 @@ const HabitsScreen = () => {
       color: 'white',
       fontSize: 14,
       fontWeight: 'bold',
+    },
+    deleteButton: {
+      backgroundColor: theme.deleteButton,
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: 100,
+    },
+    deleteButtonText: {
+      color: 'white',
+      fontSize: 14,
+      fontWeight: '600',
     },
     emptyContainer: {
       flex: 1,
@@ -181,6 +204,29 @@ const HabitsScreen = () => {
     toggleHabitCompletion(habitId, today, currentUser.email);
   };
 
+  const handleDeleteHabit = (habitId: string, habitName: string) => {
+    if (!currentUser?.email) return;
+
+    Alert.alert(
+      'Delete Habit',
+      `Are you sure you want to delete "${habitName}"? This action cannot be undone.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            removeHabit(habitId, currentUser.email);
+            Alert.alert('Success', `"${habitName}" has been deleted.`);
+          },
+        },
+      ],
+    );
+  };
+
   const renderHabitItem = ({item}: {item: Habit}) => {
     if (!currentUser?.email) return null;
 
@@ -211,16 +257,24 @@ const HabitsScreen = () => {
             </View>
           </View>
 
-          <TouchableOpacity
-            style={[
-              styles.completeButton,
-              isCompleted && styles.completeButtonCompleted,
-            ]}
-            onPress={() => handleToggleCompletion(item.id)}>
-            <Text style={styles.completeButtonText}>
-              {isCompleted ? 'Undo' : 'Complete'}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.completeButton,
+                isCompleted && styles.completeButtonCompleted,
+              ]}
+              onPress={() => handleToggleCompletion(item.id)}>
+              <Text style={styles.completeButtonText}>
+                {isCompleted ? 'Undo' : 'Complete'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDeleteHabit(item.id, item.name)}>
+              <Text style={styles.deleteButtonText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );

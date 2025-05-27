@@ -141,6 +141,10 @@ const AddHabitScreen = () => {
       color: theme.text + '80',
       marginLeft: 10,
     },
+    emptyViewContainer: {
+      height: 100,
+      width: '100%',
+    },
   });
 
   const handleSubmit = () => {
@@ -272,6 +276,7 @@ const AddHabitScreen = () => {
           <Text style={styles.submitButtonText}>Create Habit</Text>
         </TouchableOpacity>
       </ScrollView>
+      <View style={styles.emptyViewContainer}></View>
     </View>
   );
 };

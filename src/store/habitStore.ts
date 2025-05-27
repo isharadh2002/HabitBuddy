@@ -19,6 +19,7 @@ interface HabitState {
     frequency: 'daily' | 'weekly',
     userEmail: string,
   ) => void;
+  removeHabit: (habitId: string, userEmail: string) => void;
   toggleHabitCompletion: (
     habitId: string,
     date: string,
@@ -70,6 +71,14 @@ export const useHabitStore = create<HabitState>()(
           userEmail, // Associate habit with user
         };
         set(state => ({habits: [...state.habits, newHabit]}));
+      },
+
+      removeHabit: (habitId, userEmail) => {
+        set(state => ({
+          habits: state.habits.filter(
+            habit => !(habit.id === habitId && habit.userEmail === userEmail),
+          ),
+        }));
       },
 
       toggleHabitCompletion: (habitId, date, userEmail) => {

@@ -194,6 +194,10 @@ const HomeScreen = () => {
       fontStyle: 'italic',
       marginTop: 5,
     },
+    emptyViewContainer: {
+      height: 120,
+      width: '100%',
+    },
   });
 
   const getCurrentDate = () => {
@@ -391,6 +395,7 @@ const HomeScreen = () => {
             ))}
           </>
         )}
+        <View style={styles.emptyViewContainer}></View>
       </ScrollView>
     </View>
   );

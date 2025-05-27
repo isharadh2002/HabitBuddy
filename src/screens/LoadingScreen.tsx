@@ -158,7 +158,7 @@ const LoadingScreen = () => {
           </View>
         </View>
 
-        <Text style={styles.title}>Habit Tracker</Text>
+        <Text style={styles.title}>Habit Buddy</Text>
         <Text style={styles.subtitle}>
           Building better habits, one day at a time
         </Text>
