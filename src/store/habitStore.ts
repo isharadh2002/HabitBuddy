@@ -21,6 +21,13 @@ interface HabitState {
     priority: 1 | 2 | 3 | 4 | 5,
     userEmail: string,
   ) => void;
+  editHabit: (
+    habitId: string,
+    name: string,
+    frequency: 'daily' | 'weekly',
+    priority: 1 | 2 | 3 | 4 | 5,
+    userEmail: string,
+  ) => void;
   removeHabit: (habitId: string, userEmail: string) => void;
   toggleHabitCompletion: (
     habitId: string,
@@ -37,6 +44,7 @@ interface HabitState {
     userEmail: string,
   ) => Habit[];
   getUserHabits: (userEmail: string) => Habit[];
+  getHabitById: (habitId: string, userEmail: string) => Habit | undefined;
 }
 
 const getTodayString = () => {
@@ -88,6 +96,22 @@ export const useHabitStore = create<HabitState>()(
         set(state => ({habits: [...state.habits, newHabit]}));
       },
 
+      editHabit: (habitId, name, frequency, priority, userEmail) => {
+        set(state => ({
+          habits: state.habits.map(habit => {
+            if (habit.id === habitId && habit.userEmail === userEmail) {
+              return {
+                ...habit,
+                name,
+                frequency,
+                priority,
+              };
+            }
+            return habit;
+          }),
+        }));
+      },
+
       removeHabit: (habitId, userEmail) => {
         set(state => ({
           habits: state.habits.filter(
@@ -119,6 +143,12 @@ export const useHabitStore = create<HabitState>()(
           habit => habit.userEmail === userEmail,
         );
         return sortHabitsByPriority(userHabits);
+      },
+
+      getHabitById: (habitId, userEmail) => {
+        return get().habits.find(
+          habit => habit.id === habitId && habit.userEmail === userEmail,
+        );
       },
 
       isHabitCompletedToday: (habitId, userEmail) => {

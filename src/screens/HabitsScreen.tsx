@@ -12,12 +12,17 @@ import {
 import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore, Habit} from '../store/habitStore';
 import {useAuthStore} from '../store/authStore';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../navigation/types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type FilterType = 'all' | 'today' | 'completed';
+type HabitsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const HabitsScreen = () => {
   const {theme} = useTheme();
+  const navigation = useNavigation<HabitsScreenNavigationProp>();
   const {
     toggleHabitCompletion,
     isHabitCompletedToday,
@@ -201,6 +206,20 @@ const HabitsScreen = () => {
       fontSize: 14,
       fontWeight: 'bold',
     },
+    editButton: {
+      backgroundColor: '#2196F3',
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: 100,
+    },
+    editButtonText: {
+      color: 'white',
+      fontSize: 14,
+      fontWeight: '600',
+    },
     deleteButton: {
       backgroundColor: theme.deleteButton,
       paddingHorizontal: 20,
@@ -250,6 +269,10 @@ const HabitsScreen = () => {
 
     const today = getTodayString();
     toggleHabitCompletion(habitId, today, currentUser.email);
+  };
+
+  const handleEditHabit = (habitId: string) => {
+    navigation.navigate('EditHabit', {habitId});
   };
 
   const handleDeleteHabit = (habitId: string, habitName: string) => {
@@ -326,6 +349,12 @@ const HabitsScreen = () => {
               <Text style={styles.completeButtonText}>
                 {isCompleted ? 'Undo' : 'Complete'}
               </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => handleEditHabit(item.id)}>
+              <Text style={styles.editButtonText}>Edit</Text>
             </TouchableOpacity>
 
             <TouchableOpacity

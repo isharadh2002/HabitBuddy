@@ -4,6 +4,7 @@ import {RootStackParamList} from './types';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import EditHabitScreen from '../screens/EditHabitScreen';
 import {MainTabNavigator} from './MainTabNavigator';
 import {useAuthStore} from '../store/authStore';
 import {useTheme} from '../theme/ThemeContext';
@@ -36,6 +37,11 @@ export const AppNavigator = () => {
           <Stack.Screen
             name="EditProfile"
             component={EditProfileScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="EditHabit"
+            component={EditHabitScreen}
             options={{headerShown: false}}
           />
         </>

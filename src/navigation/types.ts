@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Register: undefined;
   MainTabs: undefined;
   EditProfile: undefined;
+  EditHabit: {habitId: string};
 };
 
 export type TabParamList = {
