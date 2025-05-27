@@ -7,6 +7,7 @@ export interface Habit {
   id: string;
   name: string;
   frequency: 'daily' | 'weekly';
+  priority: 1 | 2 | 3 | 4 | 5; // 1: Highest, 5: Lowest
   createdAt: Date;
   completedDates: string[]; // Array of date strings (YYYY-MM-DD)
   userEmail: string; // Add user email to associate habit with user
@@ -17,6 +18,7 @@ interface HabitState {
   addHabit: (
     name: string,
     frequency: 'daily' | 'weekly',
+    priority: 1 | 2 | 3 | 4 | 5,
     userEmail: string,
   ) => void;
   removeHabit: (habitId: string, userEmail: string) => void;
@@ -56,16 +58,29 @@ const getDayName = (dateString: string) => {
   return date.toLocaleDateString('en-US', {weekday: 'short'});
 };
 
+// Helper function to sort habits by priority
+const sortHabitsByPriority = (habits: Habit[]) => {
+  return habits.sort((a, b) => {
+    // Sort by priority first (1 = highest priority comes first)
+    if (a.priority !== b.priority) {
+      return a.priority - b.priority;
+    }
+    // If same priority, sort by creation date (newer first)
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+};
+
 export const useHabitStore = create<HabitState>()(
   persist(
     (set, get) => ({
       habits: [],
 
-      addHabit: (name, frequency, userEmail) => {
+      addHabit: (name, frequency, priority, userEmail) => {
         const newHabit: Habit = {
           id: Date.now().toString(),
           name,
           frequency,
+          priority,
           createdAt: new Date(),
           completedDates: [],
           userEmail, // Associate habit with user
@@ -100,7 +115,10 @@ export const useHabitStore = create<HabitState>()(
       },
 
       getUserHabits: userEmail => {
-        return get().habits.filter(habit => habit.userEmail === userEmail);
+        const userHabits = get().habits.filter(
+          habit => habit.userEmail === userEmail,
+        );
+        return sortHabitsByPriority(userHabits);
       },
 
       isHabitCompletedToday: (habitId, userEmail) => {
@@ -146,14 +164,22 @@ export const useHabitStore = create<HabitState>()(
         const userHabits = get().getUserHabits(userEmail);
         const today = getTodayString();
 
+        let filteredHabits: Habit[];
         switch (filter) {
           case 'today':
-            return userHabits.filter(h => h.frequency === 'daily');
+            filteredHabits = userHabits.filter(h => h.frequency === 'daily');
+            break;
           case 'completed':
-            return userHabits.filter(h => h.completedDates.includes(today));
+            filteredHabits = userHabits.filter(h =>
+              h.completedDates.includes(today),
+            );
+            break;
           default:
-            return userHabits;
+            filteredHabits = userHabits;
+            break;
         }
+
+        return sortHabitsByPriority(filteredHabits);
       },
     }),
     {

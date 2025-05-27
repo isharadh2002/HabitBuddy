@@ -1,5 +1,5 @@
 // src/screens/AddHabitScreen.tsx
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,9 @@ import {
   StatusBar,
   Alert,
   ScrollView,
+  Modal,
+  Pressable,
+  Animated,
 } from 'react-native';
 import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore} from '../store/habitStore';
@@ -22,6 +25,56 @@ const AddHabitScreen = () => {
 
   const [habitName, setHabitName] = useState('');
   const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily');
+  const [priority, setPriority] = useState<1 | 2 | 3 | 4 | 5>(3); // Default to Middle priority
+  const [modalVisible, setModalVisible] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const priorityOptions = [
+    {
+      value: 1 as const,
+      label: '1: Highest',
+      icon: 'keyboard-double-arrow-up',
+      color: '#FF4444',
+    },
+    {
+      value: 2 as const,
+      label: '2: High',
+      icon: 'keyboard-arrow-up',
+      color: '#FF8844',
+    },
+    {value: 3 as const, label: '3: Middle', icon: 'remove', color: '#4A9B7E'},
+    {
+      value: 4 as const,
+      label: '4: Low',
+      icon: 'keyboard-arrow-down',
+      color: '#44AA88',
+    },
+    {
+      value: 5 as const,
+      label: '5: Lowest',
+      icon: 'keyboard-double-arrow-down',
+      color: '#4488AA',
+    },
+  ];
+
+  const getCurrentPriorityOption = () => {
+    return (
+      priorityOptions.find(option => option.value === priority) ||
+      priorityOptions[2]
+    );
+  };
+
+  useEffect(() => {
+    if (modalVisible) {
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      fadeAnim.setValue(0);
+    }
+  }, [modalVisible]);
 
   const styles = StyleSheet.create({
     container: {
@@ -100,6 +153,83 @@ const AddHabitScreen = () => {
     frequencyButtonTextActive: {
       color: 'white',
     },
+    priorityContainer: {
+      marginBottom: 20,
+    },
+    prioritySelector: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.inputBackground,
+      borderColor: theme.borderColor,
+      borderWidth: 1,
+      borderRadius: 10,
+      paddingHorizontal: 15,
+      paddingVertical: 12,
+      justifyContent: 'space-between',
+    },
+    priorityContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    priorityIcon: {
+      marginRight: 10,
+    },
+    priorityText: {
+      fontSize: 16,
+      color: theme.text,
+      fontWeight: '500',
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContent: {
+      backgroundColor: theme.cardBackground,
+      borderRadius: 15,
+      paddingVertical: 20,
+      paddingHorizontal: 0,
+      width: '85%',
+      maxWidth: 400,
+      elevation: 8,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 4},
+      shadowOpacity: 0.3,
+      shadowRadius: 12,
+    },
+    modalHeader: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.text,
+      textAlign: 'center',
+      marginBottom: 20,
+      paddingHorizontal: 20,
+    },
+    modalItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 15,
+      paddingHorizontal: 20,
+      justifyContent: 'space-between',
+    },
+    modalItemContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    modalItemText: {
+      fontSize: 16,
+      color: theme.text,
+      marginLeft: 12,
+      fontWeight: '500',
+    },
+    separator: {
+      height: 1,
+      backgroundColor: theme.borderColor,
+      marginHorizontal: 15,
+    },
     submitButton: {
       backgroundColor: theme.buttonBackground,
       borderRadius: 15,
@@ -142,10 +272,15 @@ const AddHabitScreen = () => {
       marginLeft: 10,
     },
     emptyViewContainer: {
-      height: 100,
+      height: 150,
       width: '100%',
     },
   });
+
+  const handleSelectPriority = (value: 1 | 2 | 3 | 4 | 5) => {
+    setPriority(value);
+    setModalVisible(false);
+  };
 
   const handleSubmit = () => {
     if (!habitName.trim()) {
@@ -158,8 +293,9 @@ const AddHabitScreen = () => {
       return;
     }
 
-    addHabit(habitName.trim(), frequency, currentUser.email);
+    addHabit(habitName.trim(), frequency, priority, currentUser.email);
     setHabitName('');
+    setPriority(3); // Reset to default priority
     Alert.alert(
       'Success',
       `"${habitName}" habit has been added successfully!`,
@@ -246,6 +382,27 @@ const AddHabitScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
+
+          <View style={styles.priorityContainer}>
+            <Text style={styles.label}>Priority</Text>
+            <TouchableOpacity
+              style={styles.prioritySelector}
+              onPress={() => setModalVisible(true)}
+              activeOpacity={0.7}>
+              <View style={styles.priorityContent}>
+                <Icon
+                  name={getCurrentPriorityOption().icon}
+                  size={20}
+                  color={getCurrentPriorityOption().color}
+                  style={styles.priorityIcon}
+                />
+                <Text style={styles.priorityText}>
+                  {getCurrentPriorityOption().label}
+                </Text>
+              </View>
+              <Icon name="arrow-drop-down" size={24} color={theme.text} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.habitExamples}>
@@ -275,8 +432,44 @@ const AddHabitScreen = () => {
           disabled={!habitName.trim()}>
           <Text style={styles.submitButtonText}>Create Habit</Text>
         </TouchableOpacity>
+        <View style={styles.emptyViewContainer}></View>
       </ScrollView>
-      <View style={styles.emptyViewContainer}></View>
+
+      {/* Priority Selection Modal */}
+      <Modal
+        animationType="none"
+        transparent
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setModalVisible(false)}>
+          <Animated.View style={[styles.modalContent, {opacity: fadeAnim}]}>
+            <Text style={styles.modalHeader}>Select Priority</Text>
+            {priorityOptions.map((option, index) => (
+              <React.Fragment key={option.value}>
+                {index > 0 && <View style={styles.separator} />}
+                <Pressable
+                  android_ripple={{color: theme.borderColor}}
+                  onPress={() => handleSelectPriority(option.value)}
+                  style={styles.modalItem}>
+                  <View style={styles.modalItemContent}>
+                    <Icon name={option.icon} size={22} color={option.color} />
+                    <Text style={styles.modalItemText}>{option.label}</Text>
+                  </View>
+                  {priority === option.value && (
+                    <Icon
+                      name="check"
+                      size={20}
+                      color={theme.buttonBackground}
+                    />
+                  )}
+                </Pressable>
+              </React.Fragment>
+            ))}
+          </Animated.View>
+        </Pressable>
+      </Modal>
     </View>
   );
 };

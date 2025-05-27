@@ -36,6 +36,35 @@ const HabitsScreen = () => {
     ? getHabitsByFilter(activeFilter, currentUser.email)
     : [];
 
+  // Priority configuration
+  const priorityConfig = {
+    1: {
+      label: '1: Highest',
+      icon: 'keyboard-double-arrow-up',
+      color: '#FF4444',
+    },
+    2: {
+      label: '2: High',
+      icon: 'keyboard-arrow-up',
+      color: '#FF8844',
+    },
+    3: {
+      label: '3: Middle',
+      icon: 'remove',
+      color: '#4A9B7E',
+    },
+    4: {
+      label: '4: Low',
+      icon: 'keyboard-arrow-down',
+      color: '#44AA88',
+    },
+    5: {
+      label: '5: Lowest',
+      icon: 'keyboard-double-arrow-down',
+      color: '#4488AA',
+    },
+  };
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -112,10 +141,29 @@ const HabitsScreen = () => {
       color: theme.text,
       marginBottom: 5,
     },
+    habitMeta: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 15,
+      marginBottom: 8,
+    },
     habitFrequency: {
       fontSize: 14,
       color: theme.text + '70',
-      marginBottom: 8,
+    },
+    priorityIndicator: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.background,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    priorityText: {
+      fontSize: 12,
+      fontWeight: '600',
+      marginLeft: 4,
+      color: theme.text,
     },
     habitStatus: {
       flexDirection: 'row',
@@ -231,16 +279,27 @@ const HabitsScreen = () => {
     if (!currentUser?.email) return null;
 
     const isCompleted = isHabitCompletedToday(item.id, currentUser.email);
+    const priority = priorityConfig[item.priority];
 
     return (
       <View style={styles.habitCard}>
         <View style={styles.habitHeader}>
           <View style={styles.habitInfo}>
             <Text style={styles.habitName}>{item.name}</Text>
-            <Text style={styles.habitFrequency}>
-              {item.frequency.charAt(0).toUpperCase() + item.frequency.slice(1)}{' '}
-              habit
-            </Text>
+
+            <View style={styles.habitMeta}>
+              <Text style={styles.habitFrequency}>
+                {item.frequency.charAt(0).toUpperCase() +
+                  item.frequency.slice(1)}{' '}
+                habit
+              </Text>
+
+              <View style={styles.priorityIndicator}>
+                <Icon name={priority.icon} size={14} color={priority.color} />
+                <Text style={styles.priorityText}>{priority.label}</Text>
+              </View>
+            </View>
+
             <View style={styles.habitStatus}>
               <Icon
                 name={isCompleted ? 'check-circle' : 'radio-button-unchecked'}

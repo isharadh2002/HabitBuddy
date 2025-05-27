@@ -34,6 +34,35 @@ const HomeScreen = () => {
       )
     : [];
 
+  // Priority configuration
+  const priorityConfig = {
+    1: {
+      label: '1: Highest',
+      icon: 'keyboard-double-arrow-up',
+      color: '#FF4444',
+    },
+    2: {
+      label: '2: High',
+      icon: 'keyboard-arrow-up',
+      color: '#FF8844',
+    },
+    3: {
+      label: '3: Middle',
+      icon: 'remove',
+      color: '#4A9B7E',
+    },
+    4: {
+      label: '4: Low',
+      icon: 'keyboard-arrow-down',
+      color: '#44AA88',
+    },
+    5: {
+      label: '5: Lowest',
+      icon: 'keyboard-double-arrow-down',
+      color: '#4488AA',
+    },
+  };
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -142,12 +171,29 @@ const HomeScreen = () => {
       color: theme.text,
       marginBottom: 5,
     },
+    habitMeta: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      marginBottom: 5,
+    },
     habitSubtitle: {
       fontSize: 14,
       color: theme.text + '70',
     },
-    habitMeta: {
+    priorityIndicator: {
+      flexDirection: 'row',
       alignItems: 'center',
+      backgroundColor: theme.background,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 10,
+    },
+    priorityText: {
+      fontSize: 11,
+      fontWeight: '600',
+      marginLeft: 3,
+      color: theme.text,
     },
     statusBadge: {
       paddingHorizontal: 12,
@@ -330,30 +376,46 @@ const HomeScreen = () => {
               <Text style={styles.sectionCount}>({pendingToday.length})</Text>
             </View>
 
-            {pendingToday.slice(0, 3).map(habit => (
-              <View key={habit.id} style={styles.habitCard}>
-                <View style={styles.habitIcon}>
-                  <Icon
-                    name={getHabitIcon(habit.name, false)}
-                    size={24}
-                    color={theme.buttonBackground}
-                  />
-                </View>
-                <View style={styles.habitInfo}>
-                  <Text style={styles.habitTitle}>{habit.name}</Text>
-                  <Text style={styles.habitSubtitle}>
-                    {habit.frequency.charAt(0).toUpperCase() +
-                      habit.frequency.slice(1)}{' '}
-                    habit
-                  </Text>
-                </View>
-                <View style={styles.habitMeta}>
-                  <View style={[styles.statusBadge, styles.statusBadgePending]}>
-                    <Text style={styles.statusText}>Pending</Text>
+            {pendingToday.slice(0, 3).map(habit => {
+              const priority = priorityConfig[habit.priority];
+              return (
+                <View key={habit.id} style={styles.habitCard}>
+                  <View style={styles.habitIcon}>
+                    <Icon
+                      name={getHabitIcon(habit.name, false)}
+                      size={24}
+                      color={theme.buttonBackground}
+                    />
+                  </View>
+                  <View style={styles.habitInfo}>
+                    <Text style={styles.habitTitle}>{habit.name}</Text>
+                    <View style={styles.habitMeta}>
+                      <Text style={styles.habitSubtitle}>
+                        {habit.frequency.charAt(0).toUpperCase() +
+                          habit.frequency.slice(1)}{' '}
+                        habit
+                      </Text>
+                      <View style={styles.priorityIndicator}>
+                        <Icon
+                          name={priority.icon}
+                          size={12}
+                          color={priority.color}
+                        />
+                        <Text style={styles.priorityText}>
+                          {priority.label}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View>
+                    <View
+                      style={[styles.statusBadge, styles.statusBadgePending]}>
+                      <Text style={styles.statusText}>Pending</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </>
         )}
 
@@ -368,31 +430,46 @@ const HomeScreen = () => {
               <Text style={styles.sectionCount}>({completedToday.length})</Text>
             </View>
 
-            {completedToday.slice(0, 3).map(habit => (
-              <View key={habit.id} style={styles.habitCard}>
-                <View style={[styles.habitIcon, styles.habitIconCompleted]}>
-                  <Icon
-                    name={getHabitIcon(habit.name, true)}
-                    size={24}
-                    color="#4CAF50"
-                  />
-                </View>
-                <View style={styles.habitInfo}>
-                  <Text style={styles.habitTitle}>{habit.name}</Text>
-                  <Text style={styles.habitSubtitle}>
-                    {habit.frequency.charAt(0).toUpperCase() +
-                      habit.frequency.slice(1)}{' '}
-                    habit
-                  </Text>
-                </View>
-                <View style={styles.habitMeta}>
-                  <View
-                    style={[styles.statusBadge, styles.statusBadgeCompleted]}>
-                    <Text style={styles.statusText}>Completed</Text>
+            {completedToday.slice(0, 3).map(habit => {
+              const priority = priorityConfig[habit.priority];
+              return (
+                <View key={habit.id} style={styles.habitCard}>
+                  <View style={[styles.habitIcon, styles.habitIconCompleted]}>
+                    <Icon
+                      name={getHabitIcon(habit.name, true)}
+                      size={24}
+                      color="#4CAF50"
+                    />
+                  </View>
+                  <View style={styles.habitInfo}>
+                    <Text style={styles.habitTitle}>{habit.name}</Text>
+                    <View style={styles.habitMeta}>
+                      <Text style={styles.habitSubtitle}>
+                        {habit.frequency.charAt(0).toUpperCase() +
+                          habit.frequency.slice(1)}{' '}
+                        habit
+                      </Text>
+                      <View style={styles.priorityIndicator}>
+                        <Icon
+                          name={priority.icon}
+                          size={12}
+                          color={priority.color}
+                        />
+                        <Text style={styles.priorityText}>
+                          {priority.label}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View>
+                    <View
+                      style={[styles.statusBadge, styles.statusBadgeCompleted]}>
+                      <Text style={styles.statusText}>Completed</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </>
         )}
         <View style={styles.emptyViewContainer}></View>
