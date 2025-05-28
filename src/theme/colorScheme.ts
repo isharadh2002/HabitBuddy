@@ -1,4 +1,3 @@
-// src/theme.ts
 import {useColorScheme} from 'react-native';
 
 export type Theme = {

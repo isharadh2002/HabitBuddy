@@ -1,18 +1,19 @@
 # 📱 HabitBuddy
 
-**HabitBuddy** is a simple and intuitive habit tracker built using **React Native**. The app helps users build better routines by tracking daily habits, staying consistent, and boosting productivity.
+**HabitBuddy** is a modern and intuitive habit-tracking app built using **React Native**. It helps users build better routines by tracking daily habits, monitoring progress, and personalizing their profiles for a more tailored experience.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-- ✅ Create and manage daily habits
-- 🕒 Track progress with check-ins
-- 📅 View habits in calendar or list view
-- ✏️ Edit and delete habits with confirmation
-- 📊 Simple and clean UI using vector icons
-- 💾 Local storage with AsyncStorage
-- 🧠 State management with Zustand
+- ✅ **Create, edit, and delete habits**
+- 📅 **Track daily progress** with visual indicators
+- 👤 **Profile management** (Edit profile, view profile)
+- 📈 **Progress visualization**
+- 🔄 **Persistent login and user authentication**
+- 🧠 **Global state management** using Zustand
+- 💾 **Local storage** with AsyncStorage
+- 🎨 **Theme switching between light and dark**
 
 ---
 
@@ -20,9 +21,9 @@
 
 ### Prerequisites
 
-- Node.js (v18 or above)
+- Node.js (v18 or higher)
 - npm
-- Android Studio / Xcode for running on emulator or device
+- Android Studio / Xcode for emulator or physical device for testing
 
 ### Installation
 
@@ -39,7 +40,7 @@ cd HabitBuddy
 npm install
 ```
 
-3. Start the Metro bundler:
+3. Start Metro bundler:
 
 ```bash
 npm start
@@ -51,13 +52,11 @@ npm start
 npm run android
 ```
 
-Or run on iOS:
+Or run on iOS (Mac only):
 
 ```bash
 npm run ios
 ```
-
-> **Note**: For iOS, make sure you have a Mac with Xcode installed.
 
 ---
 
@@ -65,13 +64,37 @@ npm run ios
 
 ```
 HabitBuddy/
-├── assets/             # Images and icons
-├── components/         # Reusable UI components
-├── screens/            # Different app screens
-├── navigation/         # Navigation setup using React Navigation
-├── utils/              # Helper functions and constants
-├── App.js              # App entry point
-├── package.json        # Project configuration
+├── android/                    # Android native project
+├── ios/                        # iOS native project
+├── src/
+│   ├── components/             # Custom UI components
+│   │   └── CustomBottomTabBar.tsx
+│   ├── navigation/             # App navigation (tabs & stack)
+│   │   ├── AppNavigator.tsx
+│   │   ├── MainTabNavigator.tsx
+│   │   └── types.ts
+│   ├── screens/                # All screen views
+│   │   ├── AddHabitScreen.tsx
+│   │   ├── EditHabitScreen.tsx
+│   │   ├── EditProfileScreen.tsx
+│   │   ├── HabitsScreen.tsx
+│   │   ├── HomeScreen.tsx
+│   │   ├── LoadingScreen.tsx
+│   │   ├── LoginScreen.tsx
+│   │   ├── ProfileScreen.tsx
+│   │   ├── ProgressScreen.tsx
+│   │   └── RegisterScreen.tsx
+│   ├── store/                  # Zustand store files
+│   │   ├── authStore.ts
+│   │   └── habitStore.ts
+│   ├── theme/                  # Theme context and color schemes
+│   │   ├── colorScheme.ts
+│   │   └── ThemeContext.tsx
+├   ├── App.tsx                     # App entry point
+├── app.json                    # App configuration
+├── babel.config.js             # Babel settings
+├── package.json                # Dependencies and scripts
+├── tsconfig.json               # TypeScript configuration
 └── ...
 ```
 
@@ -81,23 +104,25 @@ HabitBuddy/
 
 - [React Native](https://reactnative.dev/)
 - [React Navigation](https://reactnavigation.org/)
-- [Zustand](https://github.com/pmndrs/zustand) - For global state
-- [AsyncStorage](https://github.com/react-native-async-storage/async-storage) - Persistent local storage
+- [Zustand](https://github.com/pmndrs/zustand)
+- [AsyncStorage](https://github.com/react-native-async-storage/async-storage)
 - [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons)
+- [TypeScript](https://www.typescriptlang.org/)
 
 ---
 
-## 📌 Future Enhancements
+## 🧩 Future Enhancements
 
-- Daily reminder notifications
-- Streak tracking
-- Authentication and cloud backup
+- 🔔 Push notifications for daily reminders
+- 🔥 Habit streak tracking system
+- ☁️ Cloud sync and backup support
+- 📆 Calendar view for completed habits
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please fork the repo and submit a pull request for review.
+All contributions are welcome! If you'd like to improve HabitBuddy, please fork the repo and submit a pull request.
 
 ---
 
@@ -109,4 +134,5 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- Open-source packages and the React Native community
+- The React Native open-source community
+- Zustand, AsyncStorage, and other awesome contributors

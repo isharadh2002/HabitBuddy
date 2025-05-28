@@ -1,10 +1,8 @@
-// src/navigation/MainTabNavigator.tsx
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {useTheme} from '../theme/ThemeContext';
 import {CustomBottomTabBar} from '../components/CustomBottomTabBar';
 
-// Import your screens
 import HomeScreen from '../screens/HomeScreen';
 import HabitsScreen from '../screens/HabitsScreen';
 import AddHabitScreen from '../screens/AddHabitScreen';

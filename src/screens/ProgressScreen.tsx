@@ -1,4 +1,3 @@
-// src/screens/ProgressScreen.tsx
 import React from 'react';
 import {
   View,

@@ -1,4 +1,3 @@
-// src/screens/RegisterScreen.tsx
 import React, {useState} from 'react';
 import {
   View,
