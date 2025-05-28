@@ -90,7 +90,7 @@ HabitBuddy/
 │   ├── theme/                  # Theme context and color schemes
 │   │   ├── colorScheme.ts
 │   │   └── ThemeContext.tsx
-├   ├── App.tsx                     # App entry point
+│   ├── App.tsx                     # App entry point
 ├── app.json                    # App configuration
 ├── babel.config.js             # Babel settings
 ├── package.json                # Dependencies and scripts
