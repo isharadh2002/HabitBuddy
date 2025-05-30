@@ -216,7 +216,7 @@ const EditProfileScreen = ({navigation}: Props) => {
   return (
     <SafeAreaView
       style={[styles.container, {backgroundColor: theme.statusBarBackground}]}
-      edges={['top']}>
+      edges={['top', 'bottom']}>
       <View style={styles.container}>
         <StatusBar
           backgroundColor={theme.statusBarBackground}

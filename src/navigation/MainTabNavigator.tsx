@@ -47,7 +47,7 @@ export const MainTabNavigator = () => {
   return (
     <SafeAreaView
       style={[styles.container, {backgroundColor: theme.statusBarBackground}]}
-      edges={['top']}>
+      edges={['top', 'bottom']}>
       <View style={styles.container}>
         {renderScreen()}
         <CustomBottomTabBar activeTab={activeTab} onTabPress={handleTabPress} />
