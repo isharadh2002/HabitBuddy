@@ -15,6 +15,7 @@ import {useAuthStore} from '../store/authStore';
 import {useTheme} from '../theme/ThemeContext';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation/types';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'EditProfile'>;
 
@@ -213,128 +214,134 @@ const EditProfileScreen = ({navigation}: Props) => {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar
-        backgroundColor={theme.statusBarBackground}
-        barStyle={theme.statusBarStyle}
-      />
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: theme.statusBarBackground}]}
+      edges={['top']}>
+      <View style={styles.container}>
+        <StatusBar
+          backgroundColor={theme.statusBarBackground}
+          barStyle={theme.statusBarStyle}
+        />
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-            activeOpacity={0.7}>
-            <Icon name="arrow-back" size={24} color={theme.text} />
-          </TouchableOpacity>
-          <Text style={styles.title}>Edit Profile</Text>
-        </View>
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.7}>
+              <Icon name="arrow-back" size={24} color={theme.text} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Edit Profile</Text>
+          </View>
 
-        {/* Basic Information */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Basic Information</Text>
+          {/* Basic Information */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Basic Information</Text>
 
-          <Text style={[styles.inputLabel, styles.firstInputLabel]}>Name</Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            style={styles.input}
-            placeholder="Enter your name"
-            placeholderTextColor={theme.placeholderText}
-          />
-
-          <Text style={styles.inputLabel}>Email</Text>
-          <TextInput
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-            placeholder="Enter your email"
-            placeholderTextColor={theme.placeholderText}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <Text style={styles.warningText}>
-            Changing your email will require you to log in again with the new
-            email.
-          </Text>
-        </View>
-
-        {/* Password Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Security</Text>
-
-          <TouchableOpacity
-            style={styles.passwordToggle}
-            onPress={() => {
-              setIsChangingPassword(!isChangingPassword);
-              if (isChangingPassword) {
-                setCurrentPassword('');
-                setNewPassword('');
-                setConfirmPassword('');
-              }
-            }}
-            activeOpacity={0.7}>
-            <Icon
-              name={
-                isChangingPassword ? 'check-box' : 'check-box-outline-blank'
-              }
-              size={20}
-              color={theme.buttonBackground}
+            <Text style={[styles.inputLabel, styles.firstInputLabel]}>
+              Name
+            </Text>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              style={styles.input}
+              placeholder="Enter your name"
+              placeholderTextColor={theme.placeholderText}
             />
-            <Text style={styles.toggleText}>Change Password</Text>
+
+            <Text style={styles.inputLabel}>Email</Text>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              style={styles.input}
+              placeholder="Enter your email"
+              placeholderTextColor={theme.placeholderText}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            <Text style={styles.warningText}>
+              Changing your email will require you to log in again with the new
+              email.
+            </Text>
+          </View>
+
+          {/* Password Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Security</Text>
+
+            <TouchableOpacity
+              style={styles.passwordToggle}
+              onPress={() => {
+                setIsChangingPassword(!isChangingPassword);
+                if (isChangingPassword) {
+                  setCurrentPassword('');
+                  setNewPassword('');
+                  setConfirmPassword('');
+                }
+              }}
+              activeOpacity={0.7}>
+              <Icon
+                name={
+                  isChangingPassword ? 'check-box' : 'check-box-outline-blank'
+                }
+                size={20}
+                color={theme.buttonBackground}
+              />
+              <Text style={styles.toggleText}>Change Password</Text>
+            </TouchableOpacity>
+
+            {isChangingPassword && (
+              <>
+                <Text style={styles.inputLabel}>Current Password</Text>
+                <TextInput
+                  value={currentPassword}
+                  onChangeText={setCurrentPassword}
+                  style={styles.input}
+                  placeholder="Enter current password"
+                  placeholderTextColor={theme.placeholderText}
+                  secureTextEntry
+                />
+
+                <Text style={styles.inputLabel}>New Password</Text>
+                <TextInput
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  style={styles.input}
+                  placeholder="Enter new password"
+                  placeholderTextColor={theme.placeholderText}
+                  secureTextEntry
+                />
+
+                <Text style={styles.inputLabel}>Confirm New Password</Text>
+                <TextInput
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  style={styles.input}
+                  placeholder="Confirm new password"
+                  placeholderTextColor={theme.placeholderText}
+                  secureTextEntry
+                />
+                <Text style={styles.warningText}>
+                  Password must be at least 6 characters long.
+                </Text>
+              </>
+            )}
+          </View>
+
+          {/* Action Buttons */}
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save Changes</Text>
           </TouchableOpacity>
 
-          {isChangingPassword && (
-            <>
-              <Text style={styles.inputLabel}>Current Password</Text>
-              <TextInput
-                value={currentPassword}
-                onChangeText={setCurrentPassword}
-                style={styles.input}
-                placeholder="Enter current password"
-                placeholderTextColor={theme.placeholderText}
-                secureTextEntry
-              />
+          <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
 
-              <Text style={styles.inputLabel}>New Password</Text>
-              <TextInput
-                value={newPassword}
-                onChangeText={setNewPassword}
-                style={styles.input}
-                placeholder="Enter new password"
-                placeholderTextColor={theme.placeholderText}
-                secureTextEntry
-              />
-
-              <Text style={styles.inputLabel}>Confirm New Password</Text>
-              <TextInput
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                style={styles.input}
-                placeholder="Confirm new password"
-                placeholderTextColor={theme.placeholderText}
-                secureTextEntry
-              />
-              <Text style={styles.warningText}>
-                Password must be at least 6 characters long.
-              </Text>
-            </>
-          )}
-        </View>
-
-        {/* Action Buttons */}
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Save Changes</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-          <Text style={styles.cancelButtonText}>Cancel</Text>
-        </TouchableOpacity>
-
-        {/* Bottom spacing for scroll */}
-        <View style={{height: 30}} />
-      </ScrollView>
-    </View>
+          {/* Bottom spacing for scroll */}
+          <View style={{height: 30}} />
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 };
 

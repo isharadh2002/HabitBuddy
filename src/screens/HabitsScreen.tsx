@@ -78,7 +78,7 @@ const HabitsScreen = () => {
     content: {
       flex: 1,
       padding: 20,
-      paddingBottom: 100,
+      paddingBottom: 20,
     },
     header: {
       flexDirection: 'row',
@@ -262,6 +262,9 @@ const HabitsScreen = () => {
       marginBottom: 15,
       textAlign: 'center',
     },
+    listFooter: {
+      height: 100,
+    },
   });
 
   const handleToggleCompletion = (habitId: string) => {
@@ -368,6 +371,10 @@ const HabitsScreen = () => {
     );
   };
 
+  const renderListFooter = () => {
+    return <View style={styles.listFooter} />;
+  };
+
   const getEmptyStateContent = () => {
     switch (activeFilter) {
       case 'today':
@@ -462,6 +469,7 @@ const HabitsScreen = () => {
             renderItem={renderHabitItem}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
+            ListFooterComponent={renderListFooter}
           />
         ) : (
           <View style={styles.emptyContainer}>

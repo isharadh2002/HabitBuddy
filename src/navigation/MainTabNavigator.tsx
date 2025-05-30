@@ -1,9 +1,10 @@
 //src/navigation/MainTabNavigator.tsx
 
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, StatusBar} from 'react-native';
 import {useTheme} from '../theme/ThemeContext';
 import {CustomBottomTabBar} from '../components/CustomBottomTabBar';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 import HomeScreen from '../screens/HomeScreen';
 import HabitsScreen from '../screens/HabitsScreen';
@@ -44,9 +45,13 @@ export const MainTabNavigator = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {renderScreen()}
-      <CustomBottomTabBar activeTab={activeTab} onTabPress={handleTabPress} />
-    </View>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: theme.statusBarBackground}]}
+      edges={['top']}>
+      <View style={styles.container}>
+        {renderScreen()}
+        <CustomBottomTabBar activeTab={activeTab} onTabPress={handleTabPress} />
+      </View>
+    </SafeAreaView>
   );
 };

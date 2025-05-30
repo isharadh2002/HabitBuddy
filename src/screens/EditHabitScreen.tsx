@@ -21,6 +21,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RouteProp} from '@react-navigation/native';
 import {RootStackParamList} from '../navigation/types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 type EditHabitScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -397,143 +398,150 @@ const EditHabitScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar
-        backgroundColor={theme.statusBarBackground}
-        barStyle={theme.statusBarStyle}
-      />
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: theme.statusBarBackground}]}
+      edges={['top']}>
+      <View style={styles.container}>
+        <StatusBar
+          backgroundColor={theme.statusBarBackground}
+          barStyle={theme.statusBarStyle}
+        />
 
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={24} color={theme.text} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Edit Habit</Text>
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon name="arrow-back" size={24} color={theme.text} />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Edit Habit</Text>
+          </View>
         </View>
-      </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.formSection}>
-          <Text style={styles.label}>Habit Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter habit name..."
-            placeholderTextColor={theme.placeholderText}
-            value={habitName}
-            onChangeText={setHabitName}
-            maxLength={50}
-          />
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.formSection}>
+            <Text style={styles.label}>Habit Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter habit name..."
+              placeholderTextColor={theme.placeholderText}
+              value={habitName}
+              onChangeText={setHabitName}
+              maxLength={50}
+            />
 
-          <View style={styles.frequencyContainer}>
-            <Text style={styles.label}>Frequency</Text>
-            <View style={styles.frequencyOptions}>
-              <TouchableOpacity
-                style={[
-                  styles.frequencyButton,
-                  frequency === 'daily' && styles.frequencyButtonActive,
-                ]}
-                onPress={() => setFrequency('daily')}>
-                <Text
+            <View style={styles.frequencyContainer}>
+              <Text style={styles.label}>Frequency</Text>
+              <View style={styles.frequencyOptions}>
+                <TouchableOpacity
                   style={[
-                    styles.frequencyButtonText,
-                    frequency === 'daily' && styles.frequencyButtonTextActive,
-                  ]}>
-                  Daily
-                </Text>
-              </TouchableOpacity>
+                    styles.frequencyButton,
+                    frequency === 'daily' && styles.frequencyButtonActive,
+                  ]}
+                  onPress={() => setFrequency('daily')}>
+                  <Text
+                    style={[
+                      styles.frequencyButtonText,
+                      frequency === 'daily' && styles.frequencyButtonTextActive,
+                    ]}>
+                    Daily
+                  </Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={[
-                  styles.frequencyButton,
-                  frequency === 'weekly' && styles.frequencyButtonActive,
-                ]}
-                onPress={() => setFrequency('weekly')}>
-                <Text
+                <TouchableOpacity
                   style={[
-                    styles.frequencyButtonText,
-                    frequency === 'weekly' && styles.frequencyButtonTextActive,
-                  ]}>
-                  Weekly
-                </Text>
+                    styles.frequencyButton,
+                    frequency === 'weekly' && styles.frequencyButtonActive,
+                  ]}
+                  onPress={() => setFrequency('weekly')}>
+                  <Text
+                    style={[
+                      styles.frequencyButtonText,
+                      frequency === 'weekly' &&
+                        styles.frequencyButtonTextActive,
+                    ]}>
+                    Weekly
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.priorityContainer}>
+              <Text style={styles.label}>Priority</Text>
+              <TouchableOpacity
+                style={styles.prioritySelector}
+                onPress={() => setModalVisible(true)}
+                activeOpacity={0.7}>
+                <View style={styles.priorityContent}>
+                  <Icon
+                    name={getCurrentPriorityOption().icon}
+                    size={20}
+                    color={getCurrentPriorityOption().color}
+                    style={styles.priorityIcon}
+                  />
+                  <Text style={styles.priorityText}>
+                    {getCurrentPriorityOption().label}
+                  </Text>
+                </View>
+                <Icon name="arrow-drop-down" size={24} color={theme.text} />
               </TouchableOpacity>
             </View>
           </View>
 
-          <View style={styles.priorityContainer}>
-            <Text style={styles.label}>Priority</Text>
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={styles.prioritySelector}
-              onPress={() => setModalVisible(true)}
-              activeOpacity={0.7}>
-              <View style={styles.priorityContent}>
-                <Icon
-                  name={getCurrentPriorityOption().icon}
-                  size={20}
-                  color={getCurrentPriorityOption().color}
-                  style={styles.priorityIcon}
-                />
-                <Text style={styles.priorityText}>
-                  {getCurrentPriorityOption().label}
-                </Text>
-              </View>
-              <Icon name="arrow-drop-down" size={24} color={theme.text} />
+              style={styles.cancelButton}
+              onPress={handleCancel}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.saveButton,
+                !habitName.trim() && styles.saveButtonDisabled,
+              ]}
+              onPress={handleSave}
+              disabled={!habitName.trim()}>
+              <Text style={styles.saveButtonText}>Save Changes</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.saveButton,
-              !habitName.trim() && styles.saveButtonDisabled,
-            ]}
-            onPress={handleSave}
-            disabled={!habitName.trim()}>
-            <Text style={styles.saveButtonText}>Save Changes</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-
-      {/* Priority Selection Modal */}
-      <Modal
-        animationType="none"
-        transparent
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setModalVisible(false)}>
-          <Animated.View style={[styles.modalContent, {opacity: fadeAnim}]}>
-            <Text style={styles.modalHeader}>Select Priority</Text>
-            {priorityOptions.map((option, index) => (
-              <React.Fragment key={option.value}>
-                {index > 0 && <View style={styles.separator} />}
-                <Pressable
-                  android_ripple={{color: theme.borderColor}}
-                  onPress={() => handleSelectPriority(option.value)}
-                  style={styles.modalItem}>
-                  <View style={styles.modalItemContent}>
-                    <Icon name={option.icon} size={22} color={option.color} />
-                    <Text style={styles.modalItemText}>{option.label}</Text>
-                  </View>
-                  {priority === option.value && (
-                    <Icon
-                      name="check"
-                      size={20}
-                      color={theme.buttonBackground}
-                    />
-                  )}
-                </Pressable>
-              </React.Fragment>
-            ))}
-          </Animated.View>
-        </Pressable>
-      </Modal>
-    </View>
+        {/* Priority Selection Modal */}
+        <Modal
+          animationType="none"
+          transparent
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}>
+          <Pressable
+            style={styles.modalOverlay}
+            onPress={() => setModalVisible(false)}>
+            <Animated.View style={[styles.modalContent, {opacity: fadeAnim}]}>
+              <Text style={styles.modalHeader}>Select Priority</Text>
+              {priorityOptions.map((option, index) => (
+                <React.Fragment key={option.value}>
+                  {index > 0 && <View style={styles.separator} />}
+                  <Pressable
+                    android_ripple={{color: theme.borderColor}}
+                    onPress={() => handleSelectPriority(option.value)}
+                    style={styles.modalItem}>
+                    <View style={styles.modalItemContent}>
+                      <Icon name={option.icon} size={22} color={option.color} />
+                      <Text style={styles.modalItemText}>{option.label}</Text>
+                    </View>
+                    {priority === option.value && (
+                      <Icon
+                        name="check"
+                        size={20}
+                        color={theme.buttonBackground}
+                      />
+                    )}
+                  </Pressable>
+                </React.Fragment>
+              ))}
+            </Animated.View>
+          </Pressable>
+        </Modal>
+      </View>
+    </SafeAreaView>
   );
 };
 
