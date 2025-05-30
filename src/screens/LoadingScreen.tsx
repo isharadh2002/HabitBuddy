@@ -1,3 +1,4 @@
+//src/screens/LoadingScreen.tsx
 import React, {useEffect, useRef} from 'react';
 import {
   View,

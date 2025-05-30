@@ -1,3 +1,5 @@
+//src/navigation/AppNavigator.tsx
+
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {RootStackParamList} from './types';
 import LoginScreen from '../screens/LoginScreen';

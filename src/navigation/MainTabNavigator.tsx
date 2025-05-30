@@ -1,3 +1,5 @@
+//src/navigation/MainTabNavigator.tsx
+
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {useTheme} from '../theme/ThemeContext';

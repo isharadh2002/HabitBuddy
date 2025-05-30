@@ -1,3 +1,4 @@
+//src/components/CustomBottomTabBar.tsx
 import React from 'react';
 import {View, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
