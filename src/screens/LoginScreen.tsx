@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  Platform,
 } from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useAuthStore} from '../store/authStore';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation/types';
@@ -26,8 +28,15 @@ const LoginScreen = ({navigation}: Props) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
       backgroundColor: theme.background,
+    },
+    scrollContainer: {
+      flexGrow: 1,
+    },
+    content: {
+      flex: 1,
+      padding: 20,
+      justifyContent: 'flex-start',
     },
     header: {
       fontSize: 28,
@@ -78,12 +87,6 @@ const LoginScreen = ({navigation}: Props) => {
     if (!useAuthStore.getState().isLoggedIn) {
       Alert.alert('Error', 'Invalid credentials');
     }
-
-    /*if (useAuthStore.getState().isLoggedIn) {
-      navigation.navigate('Home');
-    } else {
-      Alert.alert('Error', 'Invalid credentials');
-    }*/
   };
 
   return (
@@ -93,35 +96,46 @@ const LoginScreen = ({navigation}: Props) => {
         barStyle={theme.statusBarStyle}
       />
 
-      <Text style={styles.header}>Welcome Back</Text>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        extraScrollHeight={Platform.OS === 'android' ? 100 : 0}
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}>
+        <View style={styles.content}>
+          <Text style={styles.header}>Welcome Back</Text>
 
-      <TextInput
-        placeholder="Email"
-        placeholderTextColor={theme.placeholderText}
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        keyboardType="email-address"
-      />
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor={theme.placeholderText}
+            value={email}
+            onChangeText={setEmail}
+            style={styles.input}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
 
-      <TextInput
-        placeholder="Password"
-        placeholderTextColor={theme.placeholderText}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-      />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor={theme.placeholderText}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+            style={styles.input}
+          />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.linkText}>
-          Don't have an account? Register here
-        </Text>
-      </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.linkText}>
+              Don't have an account? Register here
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

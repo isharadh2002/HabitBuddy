@@ -8,11 +8,12 @@ import {
   StyleSheet,
   StatusBar,
   Alert,
-  ScrollView,
   Modal,
   Pressable,
   Animated,
+  Platform,
 } from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore} from '../store/habitStore';
 import {useAuthStore} from '../store/authStore';
@@ -81,9 +82,12 @@ const AddHabitScreen = () => {
       flex: 1,
       backgroundColor: theme.background,
     },
+    scrollContainer: {
+      flexGrow: 1,
+    },
     content: {
       padding: 20,
-      paddingBottom: 100,
+      paddingBottom: 100, // Keep bottom padding for navigation bar
     },
     header: {
       flexDirection: 'row',
@@ -271,10 +275,6 @@ const AddHabitScreen = () => {
       color: theme.text + '80',
       marginLeft: 10,
     },
-    emptyViewContainer: {
-      height: 150,
-      width: '100%',
-    },
   });
 
   const handleSelectPriority = (value: 1 | 2 | 3 | 4 | 5) => {
@@ -331,109 +331,117 @@ const AddHabitScreen = () => {
         barStyle={theme.statusBarStyle}
       />
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Icon name="add-circle" size={32} color={theme.buttonBackground} />
-          <Text style={styles.title}>Add New Habit</Text>
-        </View>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        extraScrollHeight={Platform.OS === 'android' ? 100 : 0}
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}>
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <Icon name="add-circle" size={32} color={theme.buttonBackground} />
+            <Text style={styles.title}>Add New Habit</Text>
+          </View>
 
-        <View style={styles.formSection}>
-          <Text style={styles.label}>Habit Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter habit name..."
-            placeholderTextColor={theme.placeholderText}
-            value={habitName}
-            onChangeText={setHabitName}
-            maxLength={50}
-          />
+          <View style={styles.formSection}>
+            <Text style={styles.label}>Habit Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter habit name..."
+              placeholderTextColor={theme.placeholderText}
+              value={habitName}
+              onChangeText={setHabitName}
+              maxLength={50}
+            />
 
-          <View style={styles.frequencyContainer}>
-            <Text style={styles.label}>Frequency</Text>
-            <View style={styles.frequencyOptions}>
-              <TouchableOpacity
-                style={[
-                  styles.frequencyButton,
-                  frequency === 'daily' && styles.frequencyButtonActive,
-                ]}
-                onPress={() => setFrequency('daily')}>
-                <Text
+            <View style={styles.frequencyContainer}>
+              <Text style={styles.label}>Frequency</Text>
+              <View style={styles.frequencyOptions}>
+                <TouchableOpacity
                   style={[
-                    styles.frequencyButtonText,
-                    frequency === 'daily' && styles.frequencyButtonTextActive,
-                  ]}>
-                  Daily
-                </Text>
-              </TouchableOpacity>
+                    styles.frequencyButton,
+                    frequency === 'daily' && styles.frequencyButtonActive,
+                  ]}
+                  onPress={() => setFrequency('daily')}>
+                  <Text
+                    style={[
+                      styles.frequencyButtonText,
+                      frequency === 'daily' && styles.frequencyButtonTextActive,
+                    ]}>
+                    Daily
+                  </Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={[
-                  styles.frequencyButton,
-                  frequency === 'weekly' && styles.frequencyButtonActive,
-                ]}
-                onPress={() => setFrequency('weekly')}>
-                <Text
+                <TouchableOpacity
                   style={[
-                    styles.frequencyButtonText,
-                    frequency === 'weekly' && styles.frequencyButtonTextActive,
-                  ]}>
-                  Weekly
-                </Text>
+                    styles.frequencyButton,
+                    frequency === 'weekly' && styles.frequencyButtonActive,
+                  ]}
+                  onPress={() => setFrequency('weekly')}>
+                  <Text
+                    style={[
+                      styles.frequencyButtonText,
+                      frequency === 'weekly' &&
+                        styles.frequencyButtonTextActive,
+                    ]}>
+                    Weekly
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.priorityContainer}>
+              <Text style={styles.label}>Priority</Text>
+              <TouchableOpacity
+                style={styles.prioritySelector}
+                onPress={() => setModalVisible(true)}
+                activeOpacity={0.7}>
+                <View style={styles.priorityContent}>
+                  <Icon
+                    name={getCurrentPriorityOption().icon}
+                    size={20}
+                    color={getCurrentPriorityOption().color}
+                    style={styles.priorityIcon}
+                  />
+                  <Text style={styles.priorityText}>
+                    {getCurrentPriorityOption().label}
+                  </Text>
+                </View>
+                <Icon name="arrow-drop-down" size={24} color={theme.text} />
               </TouchableOpacity>
             </View>
           </View>
 
-          <View style={styles.priorityContainer}>
-            <Text style={styles.label}>Priority</Text>
-            <TouchableOpacity
-              style={styles.prioritySelector}
-              onPress={() => setModalVisible(true)}
-              activeOpacity={0.7}>
-              <View style={styles.priorityContent}>
-                <Icon
-                  name={getCurrentPriorityOption().icon}
-                  size={20}
-                  color={getCurrentPriorityOption().color}
-                  style={styles.priorityIcon}
-                />
-                <Text style={styles.priorityText}>
-                  {getCurrentPriorityOption().label}
-                </Text>
-              </View>
-              <Icon name="arrow-drop-down" size={24} color={theme.text} />
-            </TouchableOpacity>
+          <View style={styles.habitExamples}>
+            <Text style={styles.exampleTitle}>
+              {frequency === 'daily' ? 'Daily' : 'Weekly'} Habit Examples
+            </Text>
+            {(frequency === 'daily' ? dailyExamples : weeklyExamples).map(
+              (example, index) => (
+                <View key={index} style={styles.exampleItem}>
+                  <Icon
+                    name="lightbulb-outline"
+                    size={16}
+                    color={theme.buttonBackground}
+                  />
+                  <Text style={styles.exampleText}>{example}</Text>
+                </View>
+              ),
+            )}
           </View>
-        </View>
 
-        <View style={styles.habitExamples}>
-          <Text style={styles.exampleTitle}>
-            {frequency === 'daily' ? 'Daily' : 'Weekly'} Habit Examples
-          </Text>
-          {(frequency === 'daily' ? dailyExamples : weeklyExamples).map(
-            (example, index) => (
-              <View key={index} style={styles.exampleItem}>
-                <Icon
-                  name="lightbulb-outline"
-                  size={16}
-                  color={theme.buttonBackground}
-                />
-                <Text style={styles.exampleText}>{example}</Text>
-              </View>
-            ),
-          )}
+          <TouchableOpacity
+            style={[
+              styles.submitButton,
+              !habitName.trim() && styles.submitButtonDisabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={!habitName.trim()}>
+            <Text style={styles.submitButtonText}>Create Habit</Text>
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          style={[
-            styles.submitButton,
-            !habitName.trim() && styles.submitButtonDisabled,
-          ]}
-          onPress={handleSubmit}
-          disabled={!habitName.trim()}>
-          <Text style={styles.submitButtonText}>Create Habit</Text>
-        </TouchableOpacity>
-        <View style={styles.emptyViewContainer}></View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       {/* Priority Selection Modal */}
       <Modal

@@ -8,11 +8,12 @@ import {
   StyleSheet,
   StatusBar,
   Alert,
-  ScrollView,
   Modal,
   Pressable,
   Animated,
+  Platform,
 } from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useTheme} from '../theme/ThemeContext';
 import {useHabitStore} from '../store/habitStore';
 import {useAuthStore} from '../store/authStore';
@@ -110,7 +111,7 @@ const EditHabitScreen = () => {
     } else {
       fadeAnim.setValue(0);
     }
-  }, [modalVisible]);
+  }, [modalVisible, fadeAnim]);
 
   const styles = StyleSheet.create({
     container: {
@@ -135,9 +136,12 @@ const EditHabitScreen = () => {
       color: theme.text,
       marginLeft: 10,
     },
+    scrollContainer: {
+      flexGrow: 1,
+    },
     content: {
       padding: 20,
-      paddingBottom: 100,
+      paddingBottom: 100, // Keep bottom padding for navigation bar
     },
     formSection: {
       backgroundColor: theme.cardBackground,
@@ -416,94 +420,103 @@ const EditHabitScreen = () => {
           </View>
         </View>
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.formSection}>
-            <Text style={styles.label}>Habit Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter habit name..."
-              placeholderTextColor={theme.placeholderText}
-              value={habitName}
-              onChangeText={setHabitName}
-              maxLength={50}
-            />
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          extraScrollHeight={Platform.OS === 'android' ? 100 : 0}
+          enableOnAndroid={true}
+          enableAutomaticScroll={true}>
+          <View style={styles.content}>
+            <View style={styles.formSection}>
+              <Text style={styles.label}>Habit Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter habit name..."
+                placeholderTextColor={theme.placeholderText}
+                value={habitName}
+                onChangeText={setHabitName}
+                maxLength={50}
+              />
 
-            <View style={styles.frequencyContainer}>
-              <Text style={styles.label}>Frequency</Text>
-              <View style={styles.frequencyOptions}>
-                <TouchableOpacity
-                  style={[
-                    styles.frequencyButton,
-                    frequency === 'daily' && styles.frequencyButtonActive,
-                  ]}
-                  onPress={() => setFrequency('daily')}>
-                  <Text
+              <View style={styles.frequencyContainer}>
+                <Text style={styles.label}>Frequency</Text>
+                <View style={styles.frequencyOptions}>
+                  <TouchableOpacity
                     style={[
-                      styles.frequencyButtonText,
-                      frequency === 'daily' && styles.frequencyButtonTextActive,
-                    ]}>
-                    Daily
-                  </Text>
-                </TouchableOpacity>
+                      styles.frequencyButton,
+                      frequency === 'daily' && styles.frequencyButtonActive,
+                    ]}
+                    onPress={() => setFrequency('daily')}>
+                    <Text
+                      style={[
+                        styles.frequencyButtonText,
+                        frequency === 'daily' &&
+                          styles.frequencyButtonTextActive,
+                      ]}>
+                      Daily
+                    </Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[
-                    styles.frequencyButton,
-                    frequency === 'weekly' && styles.frequencyButtonActive,
-                  ]}
-                  onPress={() => setFrequency('weekly')}>
-                  <Text
+                  <TouchableOpacity
                     style={[
-                      styles.frequencyButtonText,
-                      frequency === 'weekly' &&
-                        styles.frequencyButtonTextActive,
-                    ]}>
-                    Weekly
-                  </Text>
+                      styles.frequencyButton,
+                      frequency === 'weekly' && styles.frequencyButtonActive,
+                    ]}
+                    onPress={() => setFrequency('weekly')}>
+                    <Text
+                      style={[
+                        styles.frequencyButtonText,
+                        frequency === 'weekly' &&
+                          styles.frequencyButtonTextActive,
+                      ]}>
+                      Weekly
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.priorityContainer}>
+                <Text style={styles.label}>Priority</Text>
+                <TouchableOpacity
+                  style={styles.prioritySelector}
+                  onPress={() => setModalVisible(true)}
+                  activeOpacity={0.7}>
+                  <View style={styles.priorityContent}>
+                    <Icon
+                      name={getCurrentPriorityOption().icon}
+                      size={20}
+                      color={getCurrentPriorityOption().color}
+                      style={styles.priorityIcon}
+                    />
+                    <Text style={styles.priorityText}>
+                      {getCurrentPriorityOption().label}
+                    </Text>
+                  </View>
+                  <Icon name="arrow-drop-down" size={24} color={theme.text} />
                 </TouchableOpacity>
               </View>
             </View>
 
-            <View style={styles.priorityContainer}>
-              <Text style={styles.label}>Priority</Text>
+            <View style={styles.buttonContainer}>
               <TouchableOpacity
-                style={styles.prioritySelector}
-                onPress={() => setModalVisible(true)}
-                activeOpacity={0.7}>
-                <View style={styles.priorityContent}>
-                  <Icon
-                    name={getCurrentPriorityOption().icon}
-                    size={20}
-                    color={getCurrentPriorityOption().color}
-                    style={styles.priorityIcon}
-                  />
-                  <Text style={styles.priorityText}>
-                    {getCurrentPriorityOption().label}
-                  </Text>
-                </View>
-                <Icon name="arrow-drop-down" size={24} color={theme.text} />
+                style={styles.cancelButton}
+                onPress={handleCancel}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.saveButton,
+                  !habitName.trim() && styles.saveButtonDisabled,
+                ]}
+                onPress={handleSave}
+                disabled={!habitName.trim()}>
+                <Text style={styles.saveButtonText}>Save Changes</Text>
               </TouchableOpacity>
             </View>
           </View>
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={handleCancel}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.saveButton,
-                !habitName.trim() && styles.saveButtonDisabled,
-              ]}
-              onPress={handleSave}
-              disabled={!habitName.trim()}>
-              <Text style={styles.saveButtonText}>Save Changes</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
 
         {/* Priority Selection Modal */}
         <Modal
